@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<openerp>
+    <data>
+    <!--START CONTRACTOR VIEWS-->
+        <!--CONTRACTOR FORM VIEW-->
+        <record model="ir.ui.view" id="view_form_project">
+            <field name="name">Project</field>
+            <field name="model">budget.project</field>
+            <field name="arch" type="xml">
+                <form string="Project">
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                        </div>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="project_no" default_focus="1" placeholder="Project No"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="project_date"/>
+                                <field name="section_id"/>
+                                <field name="sub_section_id"/>
+                            </group>
+                            <group>
+                                <field name="commitment_amount"/>
+                                <field name="expenditure_amount"/>
+                            </group>
+                        </group>
+                        <group>
+                                <field name="description"/>
+                        </group>
+                        <notebook>
+                            <page string="Tasks">
+                                <field name="task_ids"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!--CONTRACTOR FORM VIEW-->
+        <record model="ir.ui.view" id="view_tree_project">
+            <field name="name">Project</field>
+            <field name="model">budget.project</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="project_no"/>
+                    <field name="project_date"/>
+                    <field name="commitment_amount"/>
+                    <field name="expenditure_amount"/>
+                </tree>
+            </field>
+        </record>
+    <!--END CONTRACTOR VIEWS-->
+
+    <!--START ACTIONS-->
+        <!--Project Action-->
+        <record model="ir.actions.act_window" id="action_project">
+            <field name="name">Project</field>
+            <field name="res_model">budget.project</field>
+            <!--<field name="domain">[('is_budget_project','=',True)]</field>-->
+            <!--<field name="context">{'default_is_budget_project': True}</field>-->
+        </record>
+
+        <!--Override View-->
+        <!--Override Default View-->
+        <record model="ir.actions.act_window.view" id="action_project_view_tree">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_tree_project"/>
+            <field name="act_window_id" ref="action_project"/>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="action_project_view_form">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_form_project"/>
+            <field name="act_window_id" ref="action_project"/>
+        </record>
+    <!--END ACTIONS-->
+    </data>
+</openerp>

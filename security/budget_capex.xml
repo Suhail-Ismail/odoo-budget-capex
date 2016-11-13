@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+    <data noupdate="0">
+        <record model="ir.module.category" id="category_capex">
+            <field name="name">Capex</field>
+            <field name="description">Category for the Capex</field>
+        </record>
+
+        <record model="res.groups" id="group_capex_user">
+            <field name="name">User</field>
+            <field name="category_id" ref="category_capex"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="group_capex_manager" model="res.groups">
+            <field name="name">Manager</field>
+            <field name="category_id" ref="category_capex"/>
+            <field name="implied_ids" eval="[(4, ref('group_capex_user'))]"/>
+        </record>
+    </data>
+</odoo>

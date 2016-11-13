@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_budget_task_task_user,budget_task.task,model_budget_task,group_capex_user,1,1,1,0
+access_budget_task_project_user,budget_task.project,model_budget_project,group_capex_user,1,1,1,0
+access_budget_task_task_manager,budget_task.task,model_budget_task,group_capex_manager,1,1,1,1
+access_budget_task_project_manager,budget_task.project,model_budget_project,group_capex_manager,1,1,1,1
