@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
 
-from . import project, task
+from . import project, project_history, task
 
-# TODO PR MODEL

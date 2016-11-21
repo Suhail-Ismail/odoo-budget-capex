@@ -22,7 +22,6 @@ CAPEX Management
     'website': "https://github.com/mpdevilleres",
     'category': 'TBPC Budget',
     'depends': [
-        'document',
         'budget_contractor'
     ],
     'data': [

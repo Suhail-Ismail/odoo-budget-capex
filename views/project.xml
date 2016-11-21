@@ -9,6 +9,26 @@
             <field name="model">budget.project</field>
             <field name="arch" type="xml">
                 <form string="Project">
+                    <header>
+                        <!--<button-->
+                            <!--string="Verify"-->
+                            <!--name="verify"-->
+                            <!--type="workflow"-->
+                            <!--states="draft" />-->
+                        <!--<button-->
+                            <!--string="Place On-hold"-->
+                            <!--name="on_hold"-->
+                            <!--type="workflow"-->
+                            <!--states="draft,verified" />-->
+                        <!--<button-->
+                            <!--string="Reject"-->
+                            <!--name="reject"-->
+                            <!--type="workflow"-->
+                            <!--states="draft,verified,on hold" />-->
+
+                        <field name="state" widget="statusbar"
+                               statusbar_visible="active,closed"/>
+                    </header>
                     <sheet>
                         <div class="oe_button_box" name="button_box">
                         </div>
@@ -24,8 +44,11 @@
                                 <field name="sub_section_id"/>
                             </group>
                             <group>
-                                <field name="commitment_amount"/>
-                                <field name="expenditure_amount"/>
+                                <field name="write_date" attrs="{'invisible': True}"/>
+                                <field name="initial_commitment_amount" attrs="{'invisible': [('write_date', '!=', False)]}"/>
+                                <field name="commitment_amount" attrs="{'invisible': [('write_date', '=', False)]}"/>
+                                <field name="initial_expenditure_amount" attrs="{'invisible': [('write_date', '!=', False)]}"/>
+                                <field name="expenditure_amount" attrs="{'invisible': [('write_date', '=', False)]}"/>
                             </group>
                         </group>
                         <group>
@@ -34,6 +57,22 @@
                         <notebook>
                             <page string="Tasks">
                                 <field name="task_ids"/>
+                            </page>
+                            <page string="Histories">
+                                <field name="id" invisible="1"/>
+                                <field name="project_history_ids" context="{'default_from_project_id': id,
+                                                                            'default_to_project_id': id,
+                                                                            'default_project_id': id}">
+                                    <tree editable="bottom">
+                                        <field name="option"/>
+                                        <field name="commitment_amount" sum="true"/>
+                                        <field name="expenditure_amount" sum="true"/>
+                                        <field name="from_project_id" attrs="{'readonly': [('option', 'in', ['add', 'subtract'])]}"/>
+                                        <field name="to_project_id" attrs="{'readonly': [('option', 'in', ['add', 'subtract'])]}"/>
+                                        <field name="change_date"/>
+                                        <field name="remarks"/>
+                                    </tree>
+                                </field>
                             </page>
                         </notebook>
                     </sheet>

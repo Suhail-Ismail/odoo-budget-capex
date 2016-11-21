@@ -12,11 +12,11 @@ class Task(models.Model):
     # ----------------------------------------------------------
     year_now = fields.Datetime.from_string(fields.Date.today()).year
     YEARS = [(year, year) for year in range(year_now - 5, year_now + 5)]
-    STATES = choices_tuple(['active', 'closed'])
+    STATES = choices_tuple(['draft', 'active', 'closed'])
 
     # BASIC FIELDS
     # ----------------------------------------------------------
-    state = fields.Selection(string='State', selection=STATES)
+    state = fields.Selection(STATES, default='draft')
     category = fields.Char(string="Category")
     year = fields.Selection(string='Year', selection=YEARS, default=year_now)
 

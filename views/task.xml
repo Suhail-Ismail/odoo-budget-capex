@@ -9,6 +9,26 @@
             <field name="model">budget.task</field>
             <field name="arch" type="xml">
                 <form string="Task">
+                    <header>
+                        <!--<button-->
+                            <!--string="Verify"-->
+                            <!--name="verify"-->
+                            <!--type="workflow"-->
+                            <!--states="draft" />-->
+                        <!--<button-->
+                            <!--string="Place On-hold"-->
+                            <!--name="on_hold"-->
+                            <!--type="workflow"-->
+                            <!--states="draft,verified" />-->
+                        <!--<button-->
+                            <!--string="Reject"-->
+                            <!--name="reject"-->
+                            <!--type="workflow"-->
+                            <!--states="draft,verified,on hold" />-->
+
+                        <field name="state" widget="statusbar"
+                               statusbar_visible="active,closed"/>
+                    </header>
                     <sheet>
                         <div class="oe_button_box" name="button_box">
                         </div>
