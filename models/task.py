@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, fields, api
-from .utils import choices_tuple
+from odoo.addons.budget_core.models.utilities import choices_tuple
+
 
 class Task(models.Model):
-    _name = 'budget.task'
+    _name = 'budget.capex.task'
     _rec_name = 'task_no'
     _description = 'Task'
 
@@ -55,15 +56,13 @@ class Task(models.Model):
     # ----------------------------------------------------------
     company_currency_id = fields.Many2one('res.currency', readonly=True,
                                           default=lambda self: self.env.user.company_id.currency_id)
-    region_id = fields.Many2one('budget.region', string="Region")
-    project_id = fields.Many2one('budget.project', string="Project")
+    region_id = fields.Many2one('budget.enduser.region', string="Region")
+    project_id = fields.Many2one('budget.core.budget',
+                                 domain=[('is_project','=',True)],
+                                 string="Project"
+                                 )
 
-    # COMPUTE FIELDS
-    # TODO: This goes to invoice module via inheritance
-    # ----------------------------------------------------------
-    # invoice_ids
-    # utilized_amount = fields.Monetary(currency_field='company_currency_id',
-    #                                   string='Utilized Amount (IM)',
-    #                                   compute='_compute_utilized_amount',
-    #                                   store=True)
-
+    @api.model
+    @api.returns('self', lambda rec: rec.id)
+    def create(self, values):
+        return super(Task,self).create(values)

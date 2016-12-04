@@ -11,12 +11,6 @@
 
     <!--MENU LEFT-->
         <menuitem
-            id="menu_project_left"
-            name="Project"
-            sequence="1"
-            parent="menu_capex_top"
-            action="action_project"/>
-        <menuitem
             id="menu_task_left"
             name="Task"
             sequence="2"

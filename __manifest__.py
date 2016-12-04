@@ -29,7 +29,6 @@ CAPEX Management
         'security/ir.model.access.csv',
 
         'views/task.xml',
-        'views/project.xml',
         'views/menu.xml',
     ],
     'demo': [
