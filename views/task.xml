@@ -75,10 +75,10 @@
                         <group>
                             <field name="notes"/>
                         </group>
-                        <!--<notebook>-->
+                        <notebook>
                             <!--<page string="Accruals">-->
                             <!--</page>-->
-                        <!--</notebook>-->
+                        </notebook>
                     </sheet>
                 </form>
             </field>
