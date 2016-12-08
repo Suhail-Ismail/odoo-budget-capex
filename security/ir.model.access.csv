@@ -1,4 +1,11 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_budget_capex_task_investment_area,budget_capex.task.investment.area,model_budget_capex_task_investment_area,,1,1,1,0
 access_budget_task_task_dependent,budget_capex.task,model_budget_capex_task,group_capex_dependent,1,0,0,0
 access_budget_task_task_user,budget_capex.task,model_budget_capex_task,group_capex_user,1,1,1,0
 access_budget_task_task_manager,budget_capex.task,model_budget_capex_task,group_capex_manager,1,1,1,1
+access_budget_task_history_dependent,budget_capex.task.history,model_budget_capex_task_history,group_capex_dependent,1,0,0,0
+access_budget_task_history_user,budget_capex.task.history,model_budget_capex_task_history,group_capex_user,1,1,1,0
+access_budget_task_history_manager,budget_capex.task.history,model_budget_capex_task_history,group_capex_manager,1,1,1,1
+access_budget_task_progress_dependent,budget_capex.task.progress,model_budget_capex_task_progress,group_capex_dependent,1,0,0,0
+access_budget_task_progress_user,budget_capex.task.progress,model_budget_capex_task_progress,group_capex_user,1,1,1,0
+access_budget_task_progress_manager,budget_capex.task.progress,model_budget_capex_task_progress,group_capex_manager,1,1,1,1

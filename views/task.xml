@@ -2,8 +2,8 @@
 
 <openerp>
     <data>
-    <!--START CONTRACTOR VIEWS-->
-        <!--CONTRACTOR FORM VIEW-->
+        <!--START VIEWS-->
+        <!--FORM VIEW-->
         <record model="ir.ui.view" id="view_form_task">
             <field name="name">Task</field>
             <field name="model">budget.capex.task</field>
@@ -11,24 +11,24 @@
                 <form string="Task">
                     <header>
 
-                        <!--<button-->
-                            <!--string="Verify"-->
-                            <!--name="verify"-->
-                            <!--type="workflow"-->
-                            <!--states="draft" />-->
-                        <!--<button-->
-                            <!--string="Place On-hold"-->
-                            <!--name="on_hold"-->
-                            <!--type="workflow"-->
-                            <!--states="draft,verified" />-->
-                        <!--<button-->
-                            <!--string="Reject"-->
-                            <!--name="reject"-->
-                            <!--type="workflow"-->
-                            <!--states="draft,verified,on hold" />-->
+                        <button
+                        string="Process"
+                        name="process"
+                        type="workflow"
+                        states="draft" />
+                        <button
+                        string="Authorize"
+                        name="authorize"
+                        type="workflow"
+                        states="under process" />
+                        <button
+                        string="Close"
+                        name="close"
+                        type="workflow"
+                        states="authorized" />
 
                         <field name="state" widget="statusbar"
-                               statusbar_visible="active,closed"/>
+                               statusbar_visible="draft,under process,authorized,closed"/>
                     </header>
                     <sheet>
                         <div class="oe_button_box" name="button_box">
@@ -42,31 +42,29 @@
                             <group>
                                 <field name="region_id"/>
                                 <field name="project_id"/>
+                                <field name="task_investment_area_id" options="{'no_create_edit': True, 'no_open': True}"/>
                                 <field name="category"/>
                                 <field name="year"/>
                                 <field name="major_type"/>
                                 <field name="minor_sub_type"/>
-                                <field name="gl_code"/>
                                 <field name="pec_no"/>
-                                <field name="task_class"/>
-                                <field name="task_owner"/>
-                                <field name="task_created_by"/>
-                                <field name="task_status"/>
                             </group>
-                            <group>
-                                <field name="authorized_amount"/>
-                                <field name="current_year"/>
+                            <field name="write_date" attrs="{'invisible': True}"/>
+                            <group attrs="{'invisible': [('write_date', '!=', False)]}">
+                                <field name="initial_progress"/>
+                                <field name="initial_commitment_amount"/>
+                                <field name="initial_expenditure_amount"/>
+                            </group>
+                            <group attrs="{'invisible': [('write_date', '==', False)]}">
+                                <field name="progress" widget="progressbar"/>
+                                <field name="commitment_amount"/>
+                                <field name="expenditure_amount"/>
+                                <field name="accrual_amount"/>
                                 <field name="total_amount"/>
-                                <field name="transferable_amount"/>
-                                <field name="current_month_exp_amount"/>
-                                <field name="completion"/>
+                                <field name="authorized_amount"/>
                             </group>
                             <group>
                                 <field name="task_start_date"/>
-                                <field name="task_completion_date"/>
-                                <field name="last_pcc_date"/>
-                                <field name="expected_completion_date"/>
-                                <field name="last_followed_date"/>
                             </group>
                         </group>
                         <group>
@@ -76,10 +74,18 @@
                             <field name="notes"/>
                         </group>
                         <notebook>
-                            <!--<page string="Accruals">-->
-                            <!--</page>-->
+                            <page string="History">
+                                <field name="history_ids" context="{'default_task_id': id}"/>
+                            </page>
+                            <page string="Progress">
+                                <field name="progress_ids" context="{'default_task_id': id}"/>
+                            </page>
                         </notebook>
                     </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
                 </form>
             </field>
         </record>
@@ -88,44 +94,51 @@
             <field name="name">Task</field>
             <field name="model">budget.capex.task</field>
             <field name="arch" type="xml">
-                <tree>
-                    <field name="region_id"/>
-                    <field name="category"/>
-                    <field name="year"/>
+                <tree decoration-success="state not in ['closed']"
+                      decoration-muted="state in ['closed']">
                     <field name="task_no"/>
+                    <field name="year"/>
+                    <field name="commitment_amount"/>
+                    <field name="expenditure_amount"/>
                     <field name="authorized_amount"/>
-                    <field name="transferable_amount"/>
-                    <!--<field name="sent_finance_date"/>-->
-                    <!--<field name="state"/>-->
+                    <field name="total_amount"/>
+                    <field name="progress" widget="progressbar"/>
+                    <field name="state"/>
                 </tree>
             </field>
         </record>
-    <!--END CONTRACTOR VIEWS-->
+        <!--END CONTRACTOR VIEWS-->
+        <!--START SEARCH-->
+        <record model="ir.ui.view" id="search_task">
+            <field name="name">Budget Search</field>
+            <field name="model">budget.capex.task</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="task_no"/>
+                    <field name="category"/>
+                    <field name="state"/>
+                    <filter
+                            name="filter_state"
+                            string="Need Action"
+                            domain="[('state', 'not in', ['closed'])]"/>
+                </search>
+            </field>
+        </record>
+        <!--END SEARCH-->
 
-    <!--START ACTIONS-->
+        <!--START ACTIONS-->
         <!--Task Action-->
         <record model="ir.actions.act_window" id="action_task">
             <field name="name">Task</field>
             <field name="res_model">budget.capex.task</field>
-            <!--<field name="domain">[('is_budget_task','=',True)]</field>-->
-            <!--<field name="context">{'default_is_budget_task': True}</field>-->
-        </record>
-
-        <!--Override View-->
-        <!--Override Default View-->
-        <record model="ir.actions.act_window.view" id="action_task_view_tree">
-            <field name="sequence" eval="1"/>
-            <field name="view_mode">tree</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot,graph</field>
             <field name="view_id" ref="view_tree_task"/>
-            <field name="act_window_id" ref="action_task"/>
+            <!--<field name="search_view_id" ref="search_budget"/>-->
+            <field name="context">{'form_view_ref': 'budget_capex.view_form_task',
+                'search_default_filter_state': 1}
+            </field>
         </record>
-
-        <record model="ir.actions.act_window.view" id="action_task_view_form">
-            <field name="sequence" eval="2"/>
-            <field name="view_mode">form</field>
-            <field name="view_id" ref="view_form_task"/>
-            <field name="act_window_id" ref="action_task"/>
-        </record>
-    <!--END ACTIONS-->
+        <!--END ACTIONS-->
     </data>
 </openerp>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<openerp>
+    <data>
+    <!--START VIEWS-->
+        <!-- FORM VIEW-->
+        <record model="ir.ui.view" id="view_form_task_history">
+            <field name="name">Budget</field>
+            <field name="model">budget.capex.task.history</field>
+            <field name="arch" type="xml">
+                <form string="Budget">
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                        </div>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="task_id" default_focus="1" placeholder="Name"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="action_taken"/>
+                            </group>
+                            <group>
+                                <field name="change_date"/>
+                            </group>
+                        </group>
+                        <group>
+                            <group>
+                                <field name="expenditure_amount" group="base.group_system"/>
+                                <field name="commitment_amount"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="remarks"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!--TREE VIEW-->
+        <record model="ir.ui.view" id="view_tree_task_history">
+            <field name="name">Budget</field>
+            <field name="model">budget.capex.task.history</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="task_id"/>
+                    <field name="action_taken"/>
+                    <field name="commitment_amount" group="base.group_system"/>
+                    <field name="expenditure_amount"/>
+                    <field name="change_date"/>
+                    <field name="remarks"/>
+                </tree>
+            </field>
+        </record>
+    <!--END VIEWS-->
+
+    <!--START ACTIONS-->
+        <!--Budget Action-->
+        <record model="ir.actions.act_window" id="action_task_history">
+            <field name="name">Budget History</field>
+            <field name="res_model">budget.capex.task.history</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot,graph</field>
+            <field name="view_id" ref="view_tree_task_history"/>
+            <field name="context">{'form_view_ref': 'budget_capex.view_form_task_history'}</field>
+
+        </record>
+    <!--END ACTIONS-->
+    </data>
+</openerp>

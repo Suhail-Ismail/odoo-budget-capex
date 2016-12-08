@@ -29,6 +29,13 @@ CAPEX Management
         'security/ir.model.access.csv',
 
         'views/task.xml',
+        'views/task_history.xml',
+        'views/task_progress.xml',
+
+        'views/budget_inherit.xml',
+
+        'workflows/budget_capex_task.xml',
+
         'views/menu.xml',
     ],
     'demo': [
