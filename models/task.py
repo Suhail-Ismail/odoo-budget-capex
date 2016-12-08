@@ -67,11 +67,11 @@ class Task(models.Model):
                                           default=lambda self: self.env.user.company_id.currency_id)
     history_ids = fields.One2many('budget.capex.task.history',
                                   'task_id',
-                                  string="Invoices")
+                                  string="Histories")
 
     progress_ids = fields.One2many('budget.capex.task.progress',
                                    'task_id',
-                                   string="Invoices")
+                                   string="Progress")
 
     task_investment_area_id = fields.Many2one('budget.capex.task.investment.area', string="Investment Area")
     region_id = fields.Many2one('budget.enduser.region', string="Region")
@@ -152,6 +152,7 @@ class Task(models.Model):
     @api.model
     @api.returns('self', lambda rec: rec.id)
     def create(self, values):
+        import ipdb;ipdb.set_trace()
         if not values.get('history_ids', False):
             initial_expenditure_amount = values.get('initial_expenditure_amount', 0.00)
             initial_commitment_amount = values.get('initial_commitment_amount', 0.00)
