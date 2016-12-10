@@ -30,7 +30,7 @@ class TaskProgress(models.Model):
                                           default=lambda self: self.env.user.company_id.currency_id)
     task_id = fields.Many2one('budget.capex.task',
                               ondelete='cascade',
-                              string="Task No")
+                              string="Task")
 
     # CONSTRAINS
     # ----------------------------------------------------------

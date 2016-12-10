@@ -125,7 +125,7 @@
         <!--END CONTRACTOR VIEWS-->
         <!--START SEARCH-->
         <record model="ir.ui.view" id="search_task">
-            <field name="name">Budget Search</field>
+            <field name="name">Task Search</field>
             <field name="model">budget.capex.task</field>
             <field name="arch" type="xml">
                 <search>

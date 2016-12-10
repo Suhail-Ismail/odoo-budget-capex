@@ -3,7 +3,7 @@
 <openerp>
     <data>
         <record model="workflow" id="wkf_budget_capex_task">
-            <field name="name">Budget Workflow</field>
+            <field name="name">Task Workflow</field>
             <field name="osv">budget.capex.task</field>
             <field name="on_create">True</field>
         </record>

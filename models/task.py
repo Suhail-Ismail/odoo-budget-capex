@@ -47,18 +47,18 @@ class Task(models.Model):
     child_ids = fields.One2many('budget.capex.task',
                                 'parent_id',
                                 domain=[('is_child', '=', True)],
-                                string="Parent Task")
+                                string="Child Tasks")
 
     progress_ids = fields.One2many('budget.capex.task.progress',
                                    'task_id',
-                                   string="Progress")
+                                   string="Individual Progress")
 
     task_investment_area_id = fields.Many2one('budget.capex.task.investment.area', string="Investment Area")
     region_id = fields.Many2one('budget.enduser.region', string="Region")
     project_id = fields.Many2one('budget.core.budget',
                                  domain=[('is_project', '=', True),
                                          ('state', 'not in', ['draft'])],
-                                 string='Project'
+                                 string='Project No'
                                  )
 
     # COMPUTE FIELDS
