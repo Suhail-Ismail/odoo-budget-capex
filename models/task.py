@@ -23,51 +23,31 @@ class Task(models.Model):
     year = fields.Selection(string='Year', selection=YEARS, default=year_now)
 
     task_no = fields.Char(string="Task No", required=True)
-    task_class = fields.Char(string="Task Class")
     task_description = fields.Text(string="Task Description")
-    task_owner = fields.Char(string="Task Owner")
-    task_created_by = fields.Char(string="Task Create By")
     task_start_date = fields.Date(string="Task Start Date")
-    task_completion_date = fields.Date(string="Task Completion Date")
-    task_status = fields.Char(string="Task Status")
-
-    # TODO ACTUAL
-    authorized_amount = fields.Monetary(currency_field='company_currency_id',
-                                        string='Authorized Amount (FN)')
-    initial_expenditure_amount = fields.Monetary(currency_field='company_currency_id',
-                                                 string='Initial Expenditure Amount')
-    initial_commitment_amount = fields.Monetary(currency_field='company_currency_id',
-                                                string='Initial Commitment Amount')
+    expenditure_amount = fields.Monetary(currency_field='company_currency_id',
+                                         string='Expenditure Amount')
+    commitment_amount = fields.Monetary(currency_field='company_currency_id',
+                                        string='Commitment Amount')
     initial_progress = fields.Float(string='Initial Progress')
-    current_year = fields.Monetary(currency_field='company_currency_id',
-                                   string='Current Year Amount')
+    pec_no = fields.Char(string="Pec No")
+    remarks = fields.Text(string="Remarks")
+
     # TODO ACTUAL
     total_amount = fields.Monetary(currency_field='company_currency_id',
                                    string='Utilized Amount (FN)')
-
-    transferable_amount = fields.Monetary(currency_field='company_currency_id',
-                                          string='Transferable Amount')
-    current_month_exp_amount = fields.Monetary(currency_field='company_currency_id',
-                                               string='Current Month Expenditure Amount')
-    completion = fields.Integer(string="Completion")
-
-    last_pcc_date = fields.Date(string="Last PCC Date")
-    expected_completion_date = fields.Date(string="Expected Completion Date")
-    last_followed_date = fields.Date(string="Last Followed Date")
-    major_type = fields.Char(string="Major Type")
-    minor_sub_type = fields.Char(string="Minor Sub Type")
-    gl_code = fields.Char(string="GL Code")
-    pec_no = fields.Char(string="Pec No")
-
-    notes = fields.Text(string="Notes")
+    # TODO ACTUAL
+    authorized_amount = fields.Monetary(currency_field='company_currency_id',
+                                        string='Authorized Amount (FN)')
 
     # RELATIONSHIPS
     # ----------------------------------------------------------
     company_currency_id = fields.Many2one('res.currency', readonly=True,
                                           default=lambda self: self.env.user.company_id.currency_id)
-    history_ids = fields.One2many('budget.capex.task.history',
-                                  'task_id',
-                                  string="Histories")
+    child_ids = fields.One2many('budget.capex.task',
+                                'parent_id',
+                                domain=[('is_child', '=', True)],
+                                string="Parent Task")
 
     progress_ids = fields.One2many('budget.capex.task.progress',
                                    'task_id',
@@ -78,19 +58,19 @@ class Task(models.Model):
     project_id = fields.Many2one('budget.core.budget',
                                  domain=[('is_project', '=', True),
                                          ('state', 'not in', ['draft'])],
-                                 string="Project"
+                                 string='Project'
                                  )
 
     # COMPUTE FIELDS
     # ----------------------------------------------------------
-    expenditure_amount = fields.Monetary(compute='_compute_expenditure_amount',
-                                         currency_field='company_currency_id',
-                                         string='Expenditure Amount',
-                                         store=True)
-    commitment_amount = fields.Monetary(compute='_compute_commitment_amount',
-                                        currency_field='company_currency_id',
-                                        string='Commitment Amount',
-                                        store=True)
+    total_expenditure_amount = fields.Monetary(compute='_compute_total_expenditure_amount',
+                                               currency_field='company_currency_id',
+                                               string='Total Expenditure Amount',
+                                               store=True)
+    total_commitment_amount = fields.Monetary(compute='_compute_total_commitment_amount',
+                                              currency_field='company_currency_id',
+                                              string='Total Commitment Amount',
+                                              store=True)
     accrual_amount = fields.Monetary(compute='_compute_accrual_amount',
                                      currency_field='company_currency_id',
                                      string='Accrual Amount',
@@ -100,22 +80,22 @@ class Task(models.Model):
                             store=True)
 
     @api.one
-    @api.depends('history_ids', 'history_ids.expenditure_amount')
-    def _compute_expenditure_amount(self):
-        for history in self.history_ids:
-            if history.action_taken in ['add']:
-                self.expenditure_amount += history.expenditure_amount
-            elif history.action_taken in ['subtract']:
-                self.expenditure_amount -= history.expenditure_amount
+    @api.depends('child_ids', 'child_ids.expenditure_amount', 'child_ids.state', 'state')
+    def _compute_total_expenditure_amount(self):
+        self.total_expenditure_amount = sum(self.child_ids. \
+                                            filtered(lambda r: r.state not in ['draft']). \
+                                            mapped('expenditure_amount'))
+        if self.state not in ['draft']:
+            self.total_expenditure_amount += self.expenditure_amount
 
     @api.one
-    @api.depends('history_ids', 'history_ids.commitment_amount')
-    def _compute_commitment_amount(self):
-        for history in self.history_ids:
-            if history.action_taken in ['add']:
-                self.commitment_amount += history.commitment_amount
-            elif history.action_taken in ['subtract']:
-                self.commitment_amount -= history.commitment_amount
+    @api.depends('child_ids', 'child_ids.commitment_amount', 'child_ids.state', 'state')
+    def _compute_total_commitment_amount(self):
+        self.total_commitment_amount = sum(self.child_ids. \
+                                            filtered(lambda r: r.state not in ['draft']). \
+                                            mapped('commitment_amount'))
+        if self.state not in ['draft']:
+            self.total_commitment_amount += self.commitment_amount
 
     @api.one
     @api.depends('progress_ids', 'progress_ids.accrual_amount')
@@ -152,23 +132,11 @@ class Task(models.Model):
     @api.model
     @api.returns('self', lambda rec: rec.id)
     def create(self, values):
-        import ipdb;ipdb.set_trace()
-        if not values.get('history_ids', False):
-            initial_expenditure_amount = values.get('initial_expenditure_amount', 0.00)
-            initial_commitment_amount = values.get('initial_commitment_amount', 0.00)
+        if not values.get('progress_ids', False):
             initial_progress = values.get('initial_progress', 0.00)
             name = values.get('name', '')
             start_date = values.get('start_date', False)
-            # create Initial history
-            history = {
-                'name': 'INITIAL: %s' % name,
-                'remarks': 'initial amount',
-                'expenditure_amount': initial_expenditure_amount,
-                'commitment_amount': initial_commitment_amount,
-                'action_taken': 'add',
-                'change_date': start_date,
-                'is_initial': True
-            }
+
             progress = {
                 'name': 'INITIAL: %s' % name,
                 'remarks': 'initial progress',
@@ -177,7 +145,6 @@ class Task(models.Model):
                 'is_initial': True
             }
 
-            values.update(history_ids=[(0, 0, history)])
             values.update(progress_ids=[(0, 0, progress)])
 
         return super(Task, self).create(values)

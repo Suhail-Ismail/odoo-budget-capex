@@ -12,20 +12,20 @@
                     <header>
 
                         <button
-                        string="Process"
-                        name="process"
-                        type="workflow"
-                        states="draft" />
+                                string="Process"
+                                name="process"
+                                type="workflow"
+                                states="draft"/>
                         <button
-                        string="Authorize"
-                        name="authorize"
-                        type="workflow"
-                        states="under process" />
+                                string="Authorize"
+                                name="authorize"
+                                type="workflow"
+                                states="under process"/>
                         <button
-                        string="Close"
-                        name="close"
-                        type="workflow"
-                        states="authorized" />
+                                string="Close"
+                                name="close"
+                                type="workflow"
+                                states="authorized"/>
 
                         <field name="state" widget="statusbar"
                                statusbar_visible="draft,under process,authorized,closed"/>
@@ -34,48 +34,63 @@
                         <div class="oe_button_box" name="button_box">
                         </div>
                         <div class="oe_title">
+                            <group group="base.group_system">
+                                <field name="is_child"/>
+                            </group>
                             <h1>
                                 <field name="task_no" default_focus="1" placeholder="Task No"/>
                             </h1>
                         </div>
                         <group>
                             <group>
+                                <field name="parent_id"/>
+                                <field name="project_id" context="{'default_is_project': True}"/>
                                 <field name="region_id"/>
-                                <field name="project_id"/>
-                                <field name="task_investment_area_id" options="{'no_create_edit': True, 'no_open': True}"/>
                                 <field name="category"/>
                                 <field name="year"/>
-                                <field name="major_type"/>
-                                <field name="minor_sub_type"/>
+                            </group>
+                            <group>
+                                <field name="task_start_date"/>
+                                <field name="task_investment_area_id"
+                                       options="{'no_create_edit': True, 'no_open': True}"/>
                                 <field name="pec_no"/>
                             </group>
+                        </group>
+                        <group>
                             <field name="write_date" attrs="{'invisible': True}"/>
                             <group attrs="{'invisible': [('write_date', '!=', False)]}">
                                 <field name="initial_progress"/>
-                                <field name="initial_commitment_amount"/>
-                                <field name="initial_expenditure_amount"/>
                             </group>
                             <group attrs="{'invisible': [('write_date', '==', False)]}">
                                 <field name="progress" widget="progressbar"/>
-                                <field name="commitment_amount"/>
-                                <field name="expenditure_amount"/>
                                 <field name="accrual_amount"/>
                                 <field name="total_amount"/>
                                 <field name="authorized_amount"/>
                             </group>
+                        </group>
+                        <group>
                             <group>
-                                <field name="task_start_date"/>
+                                <field name="total_expenditure_amount"
+                                       string="Total Expenditure"
+                                       attrs="{'invisible': [('write_date', '==', False)]}"/>
+                                <field name="expenditure_amount"/>
+                            </group>
+                            <group>
+                                <field name="total_commitment_amount"
+                                       string="Total Commitment"
+                                       attrs="{'invisible': [('write_date', '==', False)]}"/>
+                                <field name="commitment_amount"/>
                             </group>
                         </group>
                         <group>
                             <field name="task_description"/>
                         </group>
                         <group>
-                            <field name="notes"/>
+                            <field name="remarks"/>
                         </group>
                         <notebook>
-                            <page string="History">
-                                <field name="history_ids" context="{'default_task_id': id}"/>
+                            <page string="Children" attrs="{'invisible': [('is_child', '==', True)]}">
+                                <field name="child_ids" context="{'default_parent_id': id}"/>
                             </page>
                             <page string="Progress">
                                 <field name="progress_ids" context="{'default_task_id': id}"/>

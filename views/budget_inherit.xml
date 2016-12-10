@@ -12,18 +12,20 @@
 
                 <xpath expr="//field[@name='end_date']" position="after">
                     <field name="total_task_accrual_amount"
-                           attrs="{'invisible': [('is_project', '!=', True)]}"/>
+                           attrs="{'invisible': [('is_project', '!=', True),('write_date', '!=', False)]}"/>
                 </xpath>
 
                 <xpath expr="//field[@name='expenditure_amount']" position="after">
-                    <field name="total_task_expenditure_amount" attrs="{'invisible': [('is_project', '!=', True)]}"/>
-                    <field name="balance_expenditure_amount" attrs="{'invisible': [('is_project', '!=', True)]}"/>
+                    <field name="total_task_expenditure_amount" attrs="{'invisible': [('is_project', '!=', True),
+                                                                                      ('write_date', '!=', False)]}"/>
+                    <field name="balance_expenditure_amount" attrs="{'invisible': [('is_project', '!=', True),
+                                                                                   ('write_date', '!=', False)]}"/>
                 </xpath>
 
                 <xpath expr="//notebook" position="inside">
                     <page string="Task">
                         <field name="task_ids"
-                               context="{'default_task_id': id}"
+                               context="{'default_project_id': id}"
                                attrs="{'invisible': [('is_project', '!=', True)]}"/>
                     </page>
                 </xpath>
@@ -43,8 +45,10 @@
                 </xpath>
 
                 <xpath expr="//field[@name='commitment_amount']" position="after">
-                    <field name="total_task_commitment_amount" attrs="{'invisible': [('is_project', '!=', True)]}"/>
-                    <field name="balance_commitment_amount" attrs="{'invisible': [('is_project', '!=', True)]}"/>
+                    <field name="total_task_commitment_amount" attrs="{'invisible': [('is_project', '!=', True),
+                                                                                     ('write_date', '!=', False)]}"/>
+                    <field name="balance_commitment_amount" attrs="{'invisible': [('is_project', '!=', True),
+                                                                                  ('write_date', '!=', False)]}"/>
                 </xpath>
             </field>
         </record>

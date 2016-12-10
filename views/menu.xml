@@ -35,12 +35,12 @@
             sequence="1"
             parent="menu_task_left"
             action="action_task"/>
-        <menuitem
-            id="menu_task_history_left_left"
-            name="Task History"
-            sequence="2"
-            parent="menu_task_left"
-            action="action_task_history"/>
+        <!--<menuitem-->
+            <!--id="menu_task_history_left_left"-->
+            <!--name="Task History"-->
+            <!--sequence="2"-->
+            <!--parent="menu_task_left"-->
+            <!--action="action_task_history"/>-->
         <menuitem
             id="menu_task_progress_left_left"
             name="Progress History"
