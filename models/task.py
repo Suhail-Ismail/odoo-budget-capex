@@ -39,7 +39,10 @@ class Task(models.Model):
     # TODO ACTUAL
     authorized_amount = fields.Monetary(currency_field='company_currency_id',
                                         string='Authorized Amount (FN)')
-
+    # TODO NEED TO BE REVIEW IF TO BE REMOVE OR NOT
+    gmo_no = fields.Char(string='GMO No')
+    po_no = fields.Char(string='PO No')
+    is_modernization = fields.Boolean(string='Is Modernization')
     # RELATIONSHIPS
     # ----------------------------------------------------------
     company_currency_id = fields.Many2one('res.currency', readonly=True,
