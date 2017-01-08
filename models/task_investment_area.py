@@ -13,5 +13,5 @@ class BudgetInvestmentArea(models.Model):
     # RELATIONSHIPS
     # ----------------------------------------------------------
     task_ids = fields.One2many('budget.capex.task',
-                               'task_investment_area_id',
+                               'investment_area_id',
                                string="Tasks")

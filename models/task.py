@@ -6,7 +6,7 @@ from odoo.addons.budget_core.models.utilities import choices_tuple
 
 class Task(models.Model):
     _name = 'budget.capex.task'
-    _rec_name = 'task_no'
+    _rec_name = 'no'
     _description = 'Task'
     _inherit = ['mail.thread']
 
@@ -22,9 +22,9 @@ class Task(models.Model):
     category = fields.Char(string="Category")
     year = fields.Selection(string='Year', selection=YEARS, default=year_now)
 
-    task_no = fields.Char(string="Task No", required=True)
-    task_description = fields.Text(string="Task Description")
-    task_start_date = fields.Date(string="Task Start Date")
+    no = fields.Char(string="Task No", required=True)
+    description = fields.Text(string="Task Description")
+    start_date = fields.Date(string="Task Start Date")
     expenditure_amount = fields.Monetary(currency_field='company_currency_id',
                                          string='Expenditure Amount')
     commitment_amount = fields.Monetary(currency_field='company_currency_id',
@@ -53,10 +53,10 @@ class Task(models.Model):
                                 string="Child Tasks")
 
     progress_ids = fields.One2many('budget.capex.task.progress',
-                                   'task_id',
+                                   'id',
                                    string="Individual Progress")
 
-    task_investment_area_id = fields.Many2one('budget.capex.task.investment.area', string="Investment Area")
+    investment_area_id = fields.Many2one('budget.capex.task.investment.area', string="Investment Area")
     region_id = fields.Many2one('budget.enduser.region', string="Region")
     project_id = fields.Many2one('budget.core.budget',
                                  domain=[('is_project', '=', True),
@@ -127,7 +127,7 @@ class Task(models.Model):
     # CONSTRAINS
     # ----------------------------------------------------------
     _sql_constraints = [
-        ('uniq_task_no', 'UNIQUE (task_no)', 'Task No Must Be unique')
+        ('uniq_no', 'UNIQUE (no)', 'Task No Must Be unique')
     ]
 
     # OVERRIDE METHODS
