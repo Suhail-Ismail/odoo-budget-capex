@@ -23,10 +23,9 @@
                 </xpath>
 
                 <xpath expr="//notebook" position="inside">
-                    <page string="Task">
+                    <page string="Task" attrs="{'invisible': [('is_project', '!=', True)]}">
                         <field name="task_ids"
-                               context="{'default_project_id': id}"
-                               attrs="{'invisible': [('is_project', '!=', True)]}"/>
+                               context="{'default_project_id': id}"/>
                     </page>
                 </xpath>
 

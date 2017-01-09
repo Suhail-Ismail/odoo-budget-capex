@@ -3,7 +3,7 @@
     'name': "Capital Expenditure",
     'version': '0.1',
     'summary': 'CAPEX Management',
-    'sequence': 3,
+    'sequence': 4,
     'description': """
 Budget Capital Expenditure
 ===========
