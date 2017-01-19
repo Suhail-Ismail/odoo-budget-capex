@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<openerp>
+    <data>
+        <!--START VIEWS-->
+        <!--FORM VIEW-->
+        <record model="ir.ui.view" id="view_form_task">
+            <field name="name">Task</field>
+            <field name="model">budget.capex.task</field>
+            <field name="arch" type="xml">
+                <form string="Task">
+                    <header>
+
+                        <button
+                                string="Process"
+                                name="process"
+                                type="workflow"
+                                states="draft"/>
+                        <button
+                                string="Authorize"
+                                name="authorize"
+                                type="workflow"
+                                states="under process"/>
+                        <button
+                                string="Close"
+                                name="close"
+                                type="workflow"
+                                states="authorized"/>
+
+                        <field name="state" widget="statusbar"
+                               statusbar_visible="draft,under process,authorized,closed"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                        </div>
+                        <div class="oe_title">
+                            <group group="base.group_system">
+                                <field name="is_expenditure"/>
+                            </group>
+                            <h1>
+                                <field name="no" default_focus="1" placeholder="Task No"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="commitment_id"/>
+                                <field name="project_id" context="{'default_is_project': True}"/>
+                                <field name="region_id"/>
+                                <field name="category"/>
+                                <field name="year"/>
+                            </group>
+                            <group>
+                                <field name="start_date"/>
+                                <field name="investment_area_id"
+                                       options="{'no_create_edit': True, 'no_open': True}"/>
+                                <field name="pec_no"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="write_date" attrs="{'invisible': True}"/>
+                            <group attrs="{'invisible': [('write_date', '!=', False)]}">
+                                <field name="initial_progress"/>
+                            </group>
+                            <group attrs="{'invisible': [('write_date', '==', False)]}">
+                                <field name="progress" widget="progressbar"/>
+                                <field name="total_amount"/>
+                                <field name="authorized_amount"/>
+                            </group>
+                        </group>
+                        <group>
+                            <group>
+                                <field name="total_expenditure_amount"
+                                       string="Total Expenditure"
+                                       attrs="{'invisible': [('write_date', '==', False)]}"/>
+                                <field name="expenditure_amount"/>
+                            </group>
+                            <group>
+                                <field name="total_commitment_amount"
+                                       string="Total Commitment"
+                                       attrs="{'invisible': [('write_date', '==', False)]}"/>
+                                <field name="commitment_amount"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="description"/>
+                        </group>
+                        <group>
+                            <field name="remarks"/>
+                        </group>
+                        <notebook>
+                            <page string="Expenditure" attrs="{'invisible': [('is_expenditure', '==', True)]}">
+                                <field name="expenditure_ids" context="{'default_commitment_id': id}"/>
+                            </page>
+                            <page string="Progress">
+                                <field name="progress_ids" context="{'default_task_id': id}"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <!--CONTRACTOR FORM VIEW-->
+        <record model="ir.ui.view" id="view_tree_task">
+            <field name="name">Task</field>
+            <field name="model">budget.capex.task</field>
+            <field name="arch" type="xml">
+                <tree decoration-success="state not in ['closed']"
+                      decoration-muted="state in ['closed']">
+                    <field name="no"/>
+                    <field name="year"/>
+                    <field name="commitment_amount"/>
+                    <field name="expenditure_amount"/>
+                    <field name="authorized_amount"/>
+                    <field name="total_amount"/>
+                    <field name="progress" widget="progressbar"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <!--END CONTRACTOR VIEWS-->
+        <!--START SEARCH-->
+        <record model="ir.ui.view" id="search_task">
+            <field name="name">Task Search</field>
+            <field name="model">budget.capex.task</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="no"/>
+                    <field name="category"/>
+                    <field name="state"/>
+                    <filter
+                            name="filter_state"
+                            string="Need Action"
+                            domain="[('state', 'not in', ['closed'])]"/>
+                </search>
+            </field>
+        </record>
+        <!--END SEARCH-->
+
+        <!--START ACTIONS-->
+        <!--Task Action-->
+        <record model="ir.actions.act_window" id="action_task">
+            <field name="name">Task</field>
+            <field name="res_model">budget.capex.task</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot,graph</field>
+            <field name="view_id" ref="view_tree_task"/>
+            <!--<field name="search_view_id" ref="search_budget"/>-->
+            <field name="context">{'form_view_ref': 'budget_capex.view_form_task',
+                'search_default_filter_state': 1}
+            </field>
+        </record>
+        <!--END ACTIONS-->
+    </data>
+</openerp>

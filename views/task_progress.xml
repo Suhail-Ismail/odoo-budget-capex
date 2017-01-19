@@ -14,7 +14,7 @@
                         </div>
                         <div class="oe_title">
                             <h1>
-                                <field name="task_id" default_focus="1" placeholder="Name"/>
+                                <field name="task_ids"/>
                             </h1>
                         </div>
                         <group>
@@ -38,9 +38,8 @@
             <field name="model">budget.capex.task.progress</field>
             <field name="arch" type="xml">
                 <tree>
-                    <field name="task_id"/>
+                    <field name="task_ids"/>
                     <field name="progress"/>
-                    <field name="accrual_amount"/>
                     <field name="change_date"/>
                     <field name="remarks"/>
                 </tree>

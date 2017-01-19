@@ -35,11 +35,6 @@ class BudgetInherit(models.Model):
                                                    string='Total Task Commitment Amount',
                                                    store=True)
 
-    total_task_accrual_amount = fields.Monetary(compute='_compute_total_task_accrual_amount',
-                                                   currency_field='company_currency_id',
-                                                   string='Total Task Accrual Amount',
-                                                   store=True)
-
     balance_expenditure_amount = fields.Monetary(compute='_compute_balance_expenditure_amount',
                                                  currency_field='company_currency_id',
                                                  string='Balance Commitment Amount',
@@ -83,9 +78,3 @@ class BudgetInherit(models.Model):
     def _compute_balance_expenditure_amount(self):
         self.balance_expenditure_amount = self.expenditure_amount - self.total_task_expenditure_amount
 
-    @api.one
-    @api.depends('task_ids', 'task_ids.accrual_amount', 'task_ids.state')
-    def _compute_total_task_accrual_amount(self):
-        self.total_task_accrual_amount = sum(self.task_ids. \
-                                                filtered(lambda r: r.state not in ['draft']). \
-                                                mapped('accrual_amount'))

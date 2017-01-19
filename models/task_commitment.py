@@ -18,6 +18,7 @@ class Task(models.Model):
 
     # BASIC FIELDS
     # ----------------------------------------------------------
+    is_commitment = fields.Boolean('Is Commitment')
     state = fields.Selection(STATES, default='draft')
     category = fields.Char(string="Category")
     year = fields.Selection(string='Year', selection=YEARS, default=year_now)
@@ -33,28 +34,26 @@ class Task(models.Model):
     pec_no = fields.Char(string="Pec No")
     remarks = fields.Text(string="Remarks")
 
-    # TODO ACTUAL
+    # ACTUAL FROM FINANCE
     total_amount = fields.Monetary(currency_field='company_currency_id',
                                    string='Utilized Amount (FN)')
-    # TODO ACTUAL
+    # ACTUAL FROM FINANCE
     authorized_amount = fields.Monetary(currency_field='company_currency_id',
                                         string='Authorized Amount (FN)')
-    # TODO NEED TO BE REVIEW IF TO BE REMOVE OR NOT
-    gmo_no = fields.Char(string='GMO No')
-    po_no = fields.Char(string='PO No')
-    is_modernization = fields.Boolean(string='Is Modernization')
     # RELATIONSHIPS
     # ----------------------------------------------------------
     company_currency_id = fields.Many2one('res.currency', readonly=True,
                                           default=lambda self: self.env.user.company_id.currency_id)
-    child_ids = fields.One2many('budget.capex.task',
-                                'parent_id',
-                                domain=[('is_child', '=', True)],
-                                string="Child Tasks")
+    expenditure_ids = fields.One2many('budget.capex.task',
+                                      'commitment_id',
+                                      domain=[('is_expenditure', '=', True)],
+                                      string="Expenditure Tasks")
 
-    progress_ids = fields.One2many('budget.capex.task.progress',
-                                   'id',
-                                   string="Individual Progress")
+    progress_ids = fields.Many2many('budget.capex.task.progress',
+                                    'task_progress_rel',
+                                    'task_id',
+                                    'progress_id',
+                                    string="Individual Progress")
 
     investment_area_id = fields.Many2one('budget.capex.task.investment.area', string="Investment Area")
     region_id = fields.Many2one('budget.enduser.region', string="Region")
@@ -74,36 +73,27 @@ class Task(models.Model):
                                               currency_field='company_currency_id',
                                               string='Total Commitment Amount',
                                               store=True)
-    accrual_amount = fields.Monetary(compute='_compute_accrual_amount',
-                                     currency_field='company_currency_id',
-                                     string='Accrual Amount',
-                                     store=True)
     progress = fields.Float(compute='_compute_progress',
                             string='Progress',
                             store=True)
 
     @api.one
-    @api.depends('child_ids', 'child_ids.expenditure_amount', 'child_ids.state', 'state')
+    @api.depends('expenditure_ids', 'expenditure_ids.expenditure_amount', 'expenditure_ids.state', 'state')
     def _compute_total_expenditure_amount(self):
-        self.total_expenditure_amount = sum(self.child_ids. \
+        self.total_expenditure_amount = sum(self.expenditure_ids. \
                                             filtered(lambda r: r.state not in ['draft']). \
                                             mapped('expenditure_amount'))
         if self.state not in ['draft']:
             self.total_expenditure_amount += self.expenditure_amount
 
     @api.one
-    @api.depends('child_ids', 'child_ids.commitment_amount', 'child_ids.state', 'state')
+    @api.depends('expenditure_ids', 'expenditure_ids.commitment_amount', 'expenditure_ids.state', 'state')
     def _compute_total_commitment_amount(self):
-        self.total_commitment_amount = sum(self.child_ids. \
-                                            filtered(lambda r: r.state not in ['draft']). \
-                                            mapped('commitment_amount'))
+        self.total_commitment_amount = sum(self.expenditure_ids. \
+                                           filtered(lambda r: r.state not in ['draft']). \
+                                           mapped('commitment_amount'))
         if self.state not in ['draft']:
             self.total_commitment_amount += self.commitment_amount
-
-    @api.one
-    @api.depends('progress_ids', 'progress_ids.accrual_amount')
-    def _compute_accrual_amount(self):
-        self.accrual_amount = sum(self.progress_ids.mapped('accrual_amount'))
 
     @api.one
     @api.depends('progress_ids', 'progress_ids.progress')

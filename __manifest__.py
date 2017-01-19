@@ -13,8 +13,8 @@ Summary
 ---------------------
 - Project Inherit
     - Added Task Detail (ie. Total Commitment/Expenditure/Accrual/Progress/Balance)
-- Task Parent
-- Task Child
+- Task Commitment
+- Task Expenditure
 - Task Progress
 - Task Progress/Accrual
 - Access Users
@@ -28,21 +28,21 @@ Summary
         - Manager - All power to manipulate data
 - Validation
     - Task No must be unique
-    - Task Child can't have it's own child task
-    - Task Parent Total Expenditure amount can't be greater than Total Commitment amount
+    - Task Expenditure can't have it's own child task
+    - Task Commitment Total Expenditure amount can't be greater than Total Commitment amount
     - Individual Progress can't be greater than 100%
     """,
     'author': "Marc Philippe de Villeres",
     'website': "https://github.com/mpdevilleres",
     'category': 'TBPC Budget',
     'depends': [
-        'budget_contractor'
+        'budget_core'
     ],
     'data': [
         'security/budget_capex.xml',
         'security/ir.model.access.csv',
 
-        'views/task.xml',
+        'views/task_commitment.xml',
         'views/task_progress.xml',
 
         'views/budget_inherit.xml',

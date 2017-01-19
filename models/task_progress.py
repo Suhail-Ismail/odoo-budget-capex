@@ -28,24 +28,14 @@ class TaskProgress(models.Model):
     # ----------------------------------------------------------
     company_currency_id = fields.Many2one('res.currency', readonly=True,
                                           default=lambda self: self.env.user.company_id.currency_id)
-    task_id = fields.Many2one('budget.capex.task',
-                              ondelete='cascade',
-                              string="Task")
+    task_ids = fields.Many2many('budget.capex.task',
+                                'task_progress_rel',
+                                'progress_id',
+                                'task_id',
+                                string="Task")
 
     # CONSTRAINS
     # ----------------------------------------------------------
     _sql_constraints = [
         ('progress', 'CHECK (progress >= 0 and progress < 100)', 'Progress must be between 0-100')
     ]
-
-    # COMPUTE FIELDS
-    # ----------------------------------------------------------
-    accrual_amount = fields.Monetary(compute='_compute_accrual_amount',
-                                         currency_field='company_currency_id',
-                                         string='Accrual Amount',
-                                         store=True)
-
-    @api.one
-    @api.depends('progress')
-    def _compute_accrual_amount(self):
-        self.accrual_amount = self.task_id.commitment_amount * self.progress / 100

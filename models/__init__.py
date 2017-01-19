@@ -6,8 +6,8 @@ from . import budget_inherit
 
 # BASIC MODELS
 # ----------------------------------------------------------
-from . import task, task_progress, task_investment_area
+from . import task_commitment, task_progress, task_investment_area
 
 # INHERITANCE MODELS FROM THIS MODULE
 # ----------------------------------------------------------
-from . import task_child
+from . import task_expenditure
