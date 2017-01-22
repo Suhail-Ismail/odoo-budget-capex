@@ -11,36 +11,42 @@
 
     <!--MENU LEFT-->
         <menuitem
+            id="menu_task_left"
+            name="Task"
+            sequence="1"
+            parent="menu_capex_top"/>
+            <menuitem
+                id="menu_task_commitment_left_left"
+                name="Commitment"
+                sequence="1"
+                parent="menu_task_left"
+                action="action_task_commitment"/>
+            <menuitem
+                id="menu_task_expenditure_left_left"
+                name="Expenditure"
+                sequence="2"
+                parent="menu_task_left"
+                action="action_task_expenditure"/>
+            <menuitem
+                id="menu_progress_left_left"
+                name="Progress History"
+                sequence="3"
+                parent="menu_task_left"
+                action="action_progress"/>
+
+        <menuitem
             id="menu_contract_left"
             name="Contract"
-            sequence="1"
+            sequence="2"
             parent="menu_capex_top"
             action="budget_contractor.action_contract"/>
 
         <menuitem
             id="menu_project_left"
             name="Project"
-            sequence="2"
+            sequence="3"
             parent="menu_capex_top"
             action="budget_core.action_budget_inherit_project"/>
-
-        <menuitem
-            id="menu_task_left"
-            name="Task"
-            sequence="3"
-            parent="menu_capex_top"/>
-        <menuitem
-            id="menu_task_left_left"
-            name="Task"
-            sequence="1"
-            parent="menu_task_left"
-            action="action_task"/>
-        <menuitem
-            id="menu_task_progress_left_left"
-            name="Progress History"
-            sequence="3"
-            parent="menu_task_left"
-            action="action_task_progress"/>
 
     <!--END MENU LEFT-->
 

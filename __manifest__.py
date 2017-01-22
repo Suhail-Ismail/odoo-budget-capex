@@ -43,7 +43,8 @@ Summary
         'security/ir.model.access.csv',
 
         'views/task_commitment.xml',
-        'views/task_progress.xml',
+        'views/task_expenditure.xml',
+        'views/progress.xml',
 
         'views/budget_inherit.xml',
 

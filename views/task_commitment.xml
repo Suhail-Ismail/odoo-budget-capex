@@ -4,8 +4,8 @@
     <data>
         <!--START VIEWS-->
         <!--FORM VIEW-->
-        <record model="ir.ui.view" id="view_form_task">
-            <field name="name">Task</field>
+        <record model="ir.ui.view" id="view_form_task_commitment">
+            <field name="name">budget.capex.task.commitment</field>
             <field name="model">budget.capex.task</field>
             <field name="arch" type="xml">
                 <form string="Task">
@@ -35,15 +35,15 @@
                         </div>
                         <div class="oe_title">
                             <group group="base.group_system">
-                                <field name="is_expenditure"/>
+                                <field name="is_commitment"/>
+                                <field name="write_date"/>
                             </group>
                             <h1>
                                 <field name="no" default_focus="1" placeholder="Task No"/>
                             </h1>
                         </div>
-                        <group>
+                        <group string="General">
                             <group>
-                                <field name="commitment_id"/>
                                 <field name="project_id" context="{'default_is_project': True}"/>
                                 <field name="region_id"/>
                                 <field name="category"/>
@@ -55,44 +55,40 @@
                                        options="{'no_create_edit': True, 'no_open': True}"/>
                                 <field name="pec_no"/>
                             </group>
-                        </group>
-                        <group>
-                            <field name="write_date" attrs="{'invisible': True}"/>
-                            <group attrs="{'invisible': [('write_date', '!=', False)]}">
-                                <field name="initial_progress"/>
+                            <group>
+                                <field name="expenditure_amount"/>
                             </group>
+                            <group>
+                                <field name="commitment_amount"/>
+                            </group>
+                        </group>
+                            <group>
+                                <field name="description"/>
+                            </group>
+                            <group>
+                                <field name="remarks"/>
+                            </group>
+                        <group string="Summary">
                             <group attrs="{'invisible': [('write_date', '==', False)]}">
-                                <field name="progress" widget="progressbar"/>
                                 <field name="total_amount"/>
                                 <field name="authorized_amount"/>
                             </group>
                         </group>
-                        <group>
-                            <group>
-                                <field name="total_expenditure_amount"
-                                       string="Total Expenditure"
-                                       attrs="{'invisible': [('write_date', '==', False)]}"/>
-                                <field name="expenditure_amount"/>
-                            </group>
-                            <group>
-                                <field name="total_commitment_amount"
-                                       string="Total Commitment"
-                                       attrs="{'invisible': [('write_date', '==', False)]}"/>
-                                <field name="commitment_amount"/>
-                            </group>
-                        </group>
-                        <group>
-                            <field name="description"/>
-                        </group>
-                        <group>
-                            <field name="remarks"/>
-                        </group>
                         <notebook>
-                            <page string="Expenditure" attrs="{'invisible': [('is_expenditure', '==', True)]}">
-                                <field name="expenditure_ids" context="{'default_commitment_id': id}"/>
+                            <page string="Expenditure" attrs="{'invisible': [('is_commitment', '!=', True)]}">
+                                <field name="expenditure_ids" context="{'default_commitment_id': id,
+                                                                        'default_is_expenditure': True}"/>
                             </page>
                             <page string="Progress">
-                                <field name="progress_ids" context="{'default_task_id': id}"/>
+                                <field name="progress_allocation_ids"
+                                       attrs="{'readonly': 1}">
+                                    <tree>
+                                        <field name="progress_id"/>
+                                        <field name="task_id" groups="base.group_system"/>
+                                        <field name="allocated_amount" sum="1"/>
+                                        <field name="remarks"/>
+                                    </tree>
+                                </field>
                             </page>
                         </notebook>
                     </sheet>
@@ -103,27 +99,27 @@
                 </form>
             </field>
         </record>
-        <!--CONTRACTOR FORM VIEW-->
-        <record model="ir.ui.view" id="view_tree_task">
-            <field name="name">Task</field>
+        <!--TREE VIEW-->
+        <record model="ir.ui.view" id="view_tree_task_commitment">
+            <field name="name">budget.capex.task.commitment</field>
             <field name="model">budget.capex.task</field>
             <field name="arch" type="xml">
                 <tree decoration-success="state not in ['closed']"
                       decoration-muted="state in ['closed']">
                     <field name="no"/>
                     <field name="year"/>
-                    <field name="commitment_amount"/>
-                    <field name="expenditure_amount"/>
+                    <field name="is_commitment" groups="base.group_system"/>
+                    <field name="commitment_amount" sum="1"/>
+                    <field name="expenditure_amount" sum="1"/>
                     <field name="authorized_amount"/>
                     <field name="total_amount"/>
-                    <field name="progress" widget="progressbar"/>
                     <field name="state"/>
                 </tree>
             </field>
         </record>
         <!--END CONTRACTOR VIEWS-->
         <!--START SEARCH-->
-        <record model="ir.ui.view" id="search_task">
+        <record model="ir.ui.view" id="search_task_commitment">
             <field name="name">Task Search</field>
             <field name="model">budget.capex.task</field>
             <field name="arch" type="xml">
@@ -142,15 +138,17 @@
 
         <!--START ACTIONS-->
         <!--Task Action-->
-        <record model="ir.actions.act_window" id="action_task">
-            <field name="name">Task</field>
+        <record model="ir.actions.act_window" id="action_task_commitment">
+            <field name="name">Commitment Task</field>
             <field name="res_model">budget.capex.task</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form,pivot,graph</field>
-            <field name="view_id" ref="view_tree_task"/>
+            <field name="view_id" ref="view_tree_task_commitment"/>
             <!--<field name="search_view_id" ref="search_budget"/>-->
-            <field name="context">{'form_view_ref': 'budget_capex.view_form_task',
-                'search_default_filter_state': 1}
+            <field name="domain">[('is_commitment','=',True)]</field>
+            <field name="context">{'form_view_ref': 'budget_capex.view_form_task_commitment',
+                                   'search_default_filter_state': 1,
+                                   'default_is_commitment': True}
             </field>
         </record>
         <!--END ACTIONS-->

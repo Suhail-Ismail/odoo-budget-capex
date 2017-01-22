@@ -6,11 +6,10 @@ from odoo.exceptions import ValidationError
 from odoo.addons.budget_core.models.utilities import choices_tuple
 
 
-class TaskProgress(models.Model):
-    _name = 'budget.capex.task.progress'
+class ProgressAllocation(models.Model):
+    _name = 'budget.capex.progress.allocation'
     _rec_name = 'name'
-    _description = 'Task Progress'
-    _order = 'change_date'
+    _description = 'Task Progress Allocation'
 
     # CHOICES
     # ----------------------------------------------------------
@@ -18,24 +17,19 @@ class TaskProgress(models.Model):
     # BASIC FIELDS
     # ----------------------------------------------------------
     name = fields.Char(string='Name')
-    is_initial = fields.Boolean(string='Is Initial')
-
-    progress = fields.Float(string='Progress (%)')
-    change_date = fields.Date(string="Change Date")
+    allocated_amount = fields.Monetary(string='Allocated Amount',
+                                       currency_field='company_currency_id',
+                                       store=True)
     remarks = fields.Text(string="Remarks")
 
     # RELATIONSHIPS
     # ----------------------------------------------------------
     company_currency_id = fields.Many2one('res.currency', readonly=True,
                                           default=lambda self: self.env.user.company_id.currency_id)
-    task_ids = fields.Many2many('budget.capex.task',
-                                'task_progress_rel',
-                                'progress_id',
-                                'task_id',
-                                string="Task")
+    task_id = fields.Many2one('budget.capex.task',
+                              string='Task No')
+    progress_id = fields.Many2one('budget.capex.progress',
+                                  string='Progress')
 
     # CONSTRAINS
     # ----------------------------------------------------------
-    _sql_constraints = [
-        ('progress', 'CHECK (progress >= 0 and progress < 100)', 'Progress must be between 0-100')
-    ]
