@@ -6,9 +6,9 @@ from . import budget_inherit
 
 # BASIC MODELS
 # ----------------------------------------------------------
-from . import task_commitment, progress, progress_allocation,\
-    task_investment_area
+from . import cear_commitment, progress, progress_allocation,\
+    cear_investment_area
 
 # INHERITANCE MODELS FROM THIS MODULE
 # ----------------------------------------------------------
-from . import task_expenditure
+from . import cear_expenditure

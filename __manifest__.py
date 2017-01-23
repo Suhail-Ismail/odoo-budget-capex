@@ -12,24 +12,24 @@ Specifically Designed for Etisalat-TBPC
 Summary
 ---------------------
 - Project Inherit
-    - Added Task Detail (ie. Total Commitment/Expenditure/Accrual/Progress/Balance)
-- Task Commitment
-- Task Expenditure
-- Task Progress
-- Task Progress/Accrual
+    - Added Cear Detail (ie. Total Commitment/Expenditure/Accrual/Progress/Balance)
+- Cear Commitment
+- Cear Expenditure
+- Cear Progress
+- Cear Progress/Accrual
 - Access Users
-    - Task
+    - Cear
         - Dependent - Can readonly
         - User - General Usage except delete power, can Edit recurrence but not create
         - Manager - All power to manipulate data
-    - Task Progress/Accrual
+    - Cear Progress/Accrual
         - Dependent - Can readonly
         - User - General Usage except delete power, can Edit recurrence but not create
         - Manager - All power to manipulate data
 - Validation
-    - Task No must be unique
-    - Task Expenditure can't have it's own child task
-    - Task Commitment Total Expenditure amount can't be greater than Total Commitment amount
+    - Cear No must be unique
+    - Cear Expenditure can't have it's own child cear
+    - Cear Commitment Total Expenditure amount can't be greater than Total Commitment amount
     - Individual Progress can't be greater than 100%
     """,
     'author': "Marc Philippe de Villeres",
@@ -42,13 +42,13 @@ Summary
         'security/budget_capex.xml',
         'security/ir.model.access.csv',
 
-        'views/task_commitment.xml',
-        'views/task_expenditure.xml',
+        'views/cear_commitment.xml',
+        'views/cear_expenditure.xml',
         'views/progress.xml',
 
         'views/budget_inherit.xml',
 
-        'workflows/budget_capex_task.xml',
+        'workflows/budget_capex_cear.xml',
 
         'views/menu.xml',
     ],

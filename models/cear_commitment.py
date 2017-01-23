@@ -4,10 +4,10 @@ from odoo import models, fields, api
 from odoo.addons.budget_core.models.utilities import choices_tuple
 
 
-class Task(models.Model):
-    _name = 'budget.capex.task'
+class Cear(models.Model):
+    _name = 'budget.capex.cear'
     _rec_name = 'no'
-    _description = 'Task'
+    _description = 'Cear'
     _inherit = ['mail.thread']
 
     # CHOICES
@@ -23,9 +23,9 @@ class Task(models.Model):
     category = fields.Char(string="Category")
     year = fields.Selection(string='Year', selection=YEARS, default=year_now)
 
-    no = fields.Char(string="Task No", required=True)
-    description = fields.Text(string="Task Description")
-    start_date = fields.Date(string="Task Start Date")
+    no = fields.Char(string="Cear No", required=True)
+    description = fields.Text(string="Cear Description")
+    start_date = fields.Date(string="Cear Start Date")
 
     expenditure_amount = fields.Monetary(currency_field='company_currency_id',
                                          string='Expenditure Amount')
@@ -44,16 +44,16 @@ class Task(models.Model):
     # ----------------------------------------------------------
     company_currency_id = fields.Many2one('res.currency', readonly=True,
                                           default=lambda self: self.env.user.company_id.currency_id)
-    expenditure_ids = fields.One2many('budget.capex.task',
+    expenditure_ids = fields.One2many('budget.capex.cear',
                                       'commitment_id',
                                       domain=[('is_expenditure', '=', True)],
-                                      string="Expenditure Tasks")
+                                      string="Expenditure Cears")
 
     progress_allocation_ids = fields.One2many('budget.capex.progress.allocation',
-                                              'task_id',
+                                              'cear_id',
                                               string="Allocations")
 
-    investment_area_id = fields.Many2one('budget.capex.task.investment.area', string="Investment Area")
+    investment_area_id = fields.Many2one('budget.capex.cear.investment.area', string="Investment Area")
     region_id = fields.Many2one('budget.enduser.region', string="Region")
     project_id = fields.Many2one('budget.core.budget',
                                  domain=[('is_project', '=', True),
@@ -107,5 +107,5 @@ class Task(models.Model):
     # CONSTRAINS
     # ----------------------------------------------------------
     _sql_constraints = [
-        ('uniq_no', 'UNIQUE (no)', 'Task No Must Be unique')
+        ('uniq_no', 'UNIQUE (no)', 'Cear No Must Be unique')
     ]

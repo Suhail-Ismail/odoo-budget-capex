@@ -9,7 +9,7 @@ from odoo.addons.budget_core.models.utilities import choices_tuple
 class Progress(models.Model):
     _name = 'budget.capex.progress'
     _rec_name = 'name'
-    _description = 'Task Progress'
+    _description = 'Cear Progress'
     _order = 'progress_date'
 
     # CHOICES

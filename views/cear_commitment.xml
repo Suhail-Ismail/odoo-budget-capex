@@ -4,11 +4,11 @@
     <data>
         <!--START VIEWS-->
         <!--FORM VIEW-->
-        <record model="ir.ui.view" id="view_form_task_commitment">
-            <field name="name">budget.capex.task.commitment</field>
-            <field name="model">budget.capex.task</field>
+        <record model="ir.ui.view" id="view_form_cear_commitment">
+            <field name="name">budget.capex.cear.commitment</field>
+            <field name="model">budget.capex.cear</field>
             <field name="arch" type="xml">
-                <form string="Task">
+                <form string="Cear">
                     <header>
 
                         <button
@@ -39,7 +39,7 @@
                                 <field name="write_date"/>
                             </group>
                             <h1>
-                                <field name="no" default_focus="1" placeholder="Task No"/>
+                                <field name="no" default_focus="1" placeholder="Cear No"/>
                             </h1>
                         </div>
                         <group string="General">
@@ -84,7 +84,7 @@
                                        attrs="{'readonly': 1}">
                                     <tree>
                                         <field name="progress_id"/>
-                                        <field name="task_id" groups="base.group_system"/>
+                                        <field name="cear_id" groups="base.group_system"/>
                                         <field name="allocated_amount" sum="1"/>
                                         <field name="remarks"/>
                                     </tree>
@@ -100,9 +100,9 @@
             </field>
         </record>
         <!--TREE VIEW-->
-        <record model="ir.ui.view" id="view_tree_task_commitment">
-            <field name="name">budget.capex.task.commitment</field>
-            <field name="model">budget.capex.task</field>
+        <record model="ir.ui.view" id="view_tree_cear_commitment">
+            <field name="name">budget.capex.cear.commitment</field>
+            <field name="model">budget.capex.cear</field>
             <field name="arch" type="xml">
                 <tree decoration-success="state not in ['closed']"
                       decoration-muted="state in ['closed']">
@@ -119,9 +119,9 @@
         </record>
         <!--END CONTRACTOR VIEWS-->
         <!--START SEARCH-->
-        <record model="ir.ui.view" id="search_task_commitment">
-            <field name="name">Task Search</field>
-            <field name="model">budget.capex.task</field>
+        <record model="ir.ui.view" id="search_cear_commitment">
+            <field name="name">Cear Search</field>
+            <field name="model">budget.capex.cear</field>
             <field name="arch" type="xml">
                 <search>
                     <field name="no"/>
@@ -137,16 +137,16 @@
         <!--END SEARCH-->
 
         <!--START ACTIONS-->
-        <!--Task Action-->
-        <record model="ir.actions.act_window" id="action_task_commitment">
-            <field name="name">Commitment Task</field>
-            <field name="res_model">budget.capex.task</field>
+        <!--Cear Action-->
+        <record model="ir.actions.act_window" id="action_cear_commitment">
+            <field name="name">Commitment Cear</field>
+            <field name="res_model">budget.capex.cear</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form,pivot,graph</field>
-            <field name="view_id" ref="view_tree_task_commitment"/>
+            <field name="view_id" ref="view_tree_cear_commitment"/>
             <!--<field name="search_view_id" ref="search_budget"/>-->
             <field name="domain">[('is_commitment','=',True)]</field>
-            <field name="context">{'form_view_ref': 'budget_capex.view_form_task_commitment',
+            <field name="context">{'form_view_ref': 'budget_capex.view_form_cear_commitment',
                                    'search_default_filter_state': 1,
                                    'default_is_commitment': True}
             </field>

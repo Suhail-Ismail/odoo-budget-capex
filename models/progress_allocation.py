@@ -9,7 +9,7 @@ from odoo.addons.budget_core.models.utilities import choices_tuple
 class ProgressAllocation(models.Model):
     _name = 'budget.capex.progress.allocation'
     _rec_name = 'name'
-    _description = 'Task Progress Allocation'
+    _description = 'Cear Progress Allocation'
 
     # CHOICES
     # ----------------------------------------------------------
@@ -26,8 +26,8 @@ class ProgressAllocation(models.Model):
     # ----------------------------------------------------------
     company_currency_id = fields.Many2one('res.currency', readonly=True,
                                           default=lambda self: self.env.user.company_id.currency_id)
-    task_id = fields.Many2one('budget.capex.task',
-                              string='Task No')
+    cear_id = fields.Many2one('budget.capex.cear',
+                              string='Cear No')
     progress_id = fields.Many2one('budget.capex.progress',
                                   string='Progress')
 

@@ -4,10 +4,10 @@
     <data>
         <!--START VIEWS-->
         <!--FORM VIEW-->
-        <record model="ir.ui.view" id="view_form_task_expenditure">
-            <field name="name">budget.capex.task.expenditure</field>
-            <field name="model">budget.capex.task</field>
-            <field name="inherit_id" ref="view_form_task_commitment"/>
+        <record model="ir.ui.view" id="view_form_cear_expenditure">
+            <field name="name">budget.capex.cear.expenditure</field>
+            <field name="model">budget.capex.cear</field>
+            <field name="inherit_id" ref="view_form_cear_commitment"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='is_commitment']" position="after">
                     <field name="is_expenditure"/>
@@ -21,10 +21,10 @@
             </field>
         </record>
         <!--TREE VIEW-->
-        <record model="ir.ui.view" id="view_tree_task_expenditure">
-            <field name="name">Task</field>
-            <field name="model">budget.capex.task</field>
-            <field name="inherit_id" ref="view_tree_task_commitment"/>
+        <record model="ir.ui.view" id="view_tree_cear_expenditure">
+            <field name="name">Cear</field>
+            <field name="model">budget.capex.cear</field>
+            <field name="inherit_id" ref="view_tree_cear_commitment"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='is_commitment']" position="after">
                     <field name="is_expenditure" groups="base.group_system"/>
@@ -34,16 +34,16 @@
         <!--END CONTRACTOR VIEWS-->
 
         <!--START ACTIONS-->
-        <!--Task Action-->
-        <record model="ir.actions.act_window" id="action_task_expenditure">
-            <field name="name">Expenditure Task</field>
-            <field name="res_model">budget.capex.task</field>
+        <!--Cear Action-->
+        <record model="ir.actions.act_window" id="action_cear_expenditure">
+            <field name="name">Expenditure Cear</field>
+            <field name="res_model">budget.capex.cear</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form,pivot,graph</field>
-            <field name="view_id" ref="view_tree_task_expenditure"/>
-            <field name="search_view_id" ref="budget_capex.search_task_commitment"/>
+            <field name="view_id" ref="view_tree_cear_expenditure"/>
+            <field name="search_view_id" ref="budget_capex.search_cear_commitment"/>
             <field name="domain">[('is_expenditure','=',True)]</field>
-            <field name="context">{'form_view_ref': 'budget_capex.view_form_task_expenditure',
+            <field name="context">{'form_view_ref': 'budget_capex.view_form_cear_expenditure',
                 'search_default_filter_state': 1,
                 'default_is_expenditure': True}
             </field>

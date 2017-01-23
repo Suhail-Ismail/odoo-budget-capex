@@ -11,27 +11,27 @@
 
     <!--MENU LEFT-->
         <menuitem
-            id="menu_task_left"
-            name="Task"
+            id="menu_cear_left"
+            name="CEAR"
             sequence="1"
             parent="menu_capex_top"/>
             <menuitem
-                id="menu_task_commitment_left_left"
-                name="Commitment"
+                id="menu_cear_commitment_left_left"
+                name="Commitment Cear"
                 sequence="1"
-                parent="menu_task_left"
-                action="action_task_commitment"/>
+                parent="menu_cear_left"
+                action="action_cear_commitment"/>
             <menuitem
-                id="menu_task_expenditure_left_left"
-                name="Expenditure"
+                id="menu_cear_expenditure_left_left"
+                name="Expenditure Cear"
                 sequence="2"
-                parent="menu_task_left"
-                action="action_task_expenditure"/>
+                parent="menu_cear_left"
+                action="action_cear_expenditure"/>
             <menuitem
                 id="menu_progress_left_left"
-                name="Progress History"
+                name="Progress"
                 sequence="3"
-                parent="menu_task_left"
+                parent="menu_cear_left"
                 action="action_progress"/>
 
         <menuitem
@@ -43,11 +43,24 @@
 
         <menuitem
             id="menu_project_left"
-            name="Project"
+            name="CAPEX Budget"
             sequence="3"
             parent="menu_capex_top"
+            />
+
+        <menuitem
+            id="menu_cwip_left"
+            name="CWIP"
+            sequence="1"
+            parent="menu_project_left"
             action="budget_core.action_budget_inherit_project"/>
 
+        <menuitem
+            id="menu_budget_plan_left"
+            name="Budget Plan"
+            sequence="2"
+            parent="menu_project_left"
+            action="budget_core.action_budget_plan_inherit_project"/>
     <!--END MENU LEFT-->
 
     </data>
