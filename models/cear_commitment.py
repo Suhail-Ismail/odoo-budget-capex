@@ -61,35 +61,6 @@ class Cear(models.Model):
                                  string='Project No'
                                  )
 
-    # # COMPUTE FIELDS
-    # # ----------------------------------------------------------
-    # total_expenditure_amount = fields.Monetary(compute='_compute_total_expenditure_amount',
-    #                                            currency_field='company_currency_id',
-    #                                            string='Total Expenditure Amount',
-    #                                            store=True)
-    # total_commitment_amount = fields.Monetary(compute='_compute_total_commitment_amount',
-    #                                           currency_field='company_currency_id',
-    #                                           string='Total Commitment Amount',
-    #                                           store=True)
-    #
-    # @api.one
-    # @api.depends('expenditure_ids', 'expenditure_ids.expenditure_amount', 'expenditure_ids.state', 'state')
-    # def _compute_total_expenditure_amount(self):
-    #     self.total_expenditure_amount = sum(self.expenditure_ids. \
-    #                                         filtered(lambda r: r.state not in ['draft']). \
-    #                                         mapped('expenditure_amount'))
-    #     if self.state not in ['draft']:
-    #         self.total_expenditure_amount += self.expenditure_amount
-    #
-    # @api.one
-    # @api.depends('expenditure_ids', 'expenditure_ids.commitment_amount', 'expenditure_ids.state', 'state')
-    # def _compute_total_commitment_amount(self):
-    #     self.total_commitment_amount = sum(self.expenditure_ids. \
-    #                                        filtered(lambda r: r.state not in ['draft']). \
-    #                                        mapped('commitment_amount'))
-    #     if self.state not in ['draft']:
-    #         self.total_commitment_amount += self.commitment_amount
-
     # TRANSITIONS
     # ----------------------------------------------------------
     def set2draft(self):

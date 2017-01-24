@@ -35,15 +35,3 @@ class CearExpenditure(models.Model):
         """
         if self.is_expenditure and len(self.expenditure_ids) > 0:
             raise ValidationError("A Expenditure Cear Can't have it's own Expenditure Cear")
-
-            # # total_expenditure_amount and total_commitment_amount
-            # # exist in cear
-            # @api.one
-            # @api.constrains('total_expenditure_amount', 'total_commitment_amount', 'is_expenditure')
-            # def _check_total_expenditure_total_commitment(self):
-            #     """
-            #     The Total Expenditure must not be greater than Total Commitment
-            #     If not expenditure
-            #     """
-            #     if not self.is_expenditure and self.total_expenditure_amount > self.total_commitment_amount:
-            #         raise ValidationError("Commitment Cear Total Expenditure Can't exceed Total Commitment")

@@ -9,13 +9,6 @@
             <field name="inherit_id" ref="budget_core.view_form_budget"/>
             <field name="arch" type="xml">
 
-                <!--<xpath expr="//field[@name='expenditure_amount']" position="after">-->
-                    <!--<field name="total_cear_expenditure_amount" attrs="{'invisible': [('is_project', '!=', True),-->
-                                                                                      <!--('write_date', '!=', False)]}"/>-->
-                    <!--<field name="balance_expenditure_amount" attrs="{'invisible': [('is_project', '!=', True),-->
-                                                                                   <!--('write_date', '!=', False)]}"/>-->
-                <!--</xpath>-->
-
                 <xpath expr="//notebook" position="inside">
                     <page string="Cear" attrs="{'invisible': [('is_project', '!=', True)]}">
                         <field name="cear_ids"
@@ -32,10 +25,6 @@
             <field name="arch" type="xml">
 
                 <xpath expr="//field[@name='commitment_amount']" position="after">
-                    <!--<field name="total_cear_commitment_amount" attrs="{'invisible': [('is_project', '!=', True),-->
-                                                                                     <!--('write_date', '!=', False)]}"/>-->
-                    <!--<field name="balance_commitment_amount" attrs="{'invisible': [('is_project', '!=', True),-->
-                                                                                  <!--('write_date', '!=', False)]}"/>-->
                 </xpath>
             </field>
         </record>
