@@ -70,7 +70,7 @@
                             </group>
                         <group string="Summary">
                             <group attrs="{'invisible': [('write_date', '==', False)]}">
-                                <field name="total_amount"/>
+                                <field name="fn_utilized_amount"/>
                                 <field name="authorized_amount"/>
                             </group>
                         </group>
@@ -112,7 +112,7 @@
                     <field name="commitment_amount" sum="1"/>
                     <field name="expenditure_amount" sum="1"/>
                     <field name="authorized_amount"/>
-                    <field name="total_amount"/>
+                    <field name="fn_utilized_amount"/>
                     <field name="state"/>
                 </tree>
             </field>

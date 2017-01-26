@@ -35,8 +35,8 @@ class Cear(models.Model):
     remarks = fields.Text(string="Remarks")
 
     # ACTUAL FROM FINANCE
-    total_amount = fields.Monetary(currency_field='company_currency_id',
-                                   string='Utilized Amount')
+    fn_utilized_amount = fields.Monetary(currency_field='company_currency_id',
+                                             string='Utilized Amount (FN)')
     # ACTUAL FROM FINANCE
     authorized_amount = fields.Monetary(currency_field='company_currency_id',
                                         string='Authorized Amount')
