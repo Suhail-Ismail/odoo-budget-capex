@@ -31,7 +31,28 @@
                 </xpath>
             </field>
         </record>
-        <!--END CONTRACTOR VIEWS-->
+
+        <!--START SEARCH-->
+        <record model="ir.ui.view" id="search_cear_expenditure">
+            <field name="name">Cear Search</field>
+            <field name="model">budget.capex.cear</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="no"/>
+                    <field name="category"/>
+                    <field name="state"/>
+                    <filter
+                            name="filter_state"
+                            string="Need Action"
+                            domain="[('state', 'not in', ['closed'])]"/>
+                    <filter
+                            name="filter_expenditure"
+                            string="Expenditure CEAR Need Action"
+                            domain="[('is_expenditure', =', True)]"/>
+                </search>
+            </field>
+        </record>
+        <!--END SEARCH-->
 
         <!--START ACTIONS-->
         <!--Cear Action-->
@@ -44,8 +65,7 @@
             <field name="search_view_id" ref="budget_capex.search_cear_commitment"/>
             <field name="domain">[('is_expenditure','=',True)]</field>
             <field name="context">{'form_view_ref': 'budget_capex.view_form_cear_expenditure',
-                'search_default_filter_state': 1,
-                'default_is_expenditure': True}
+                                   'search_default_filter_expenditure': 1}
             </field>
         </record>
         <!--END ACTIONS-->

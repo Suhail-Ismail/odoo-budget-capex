@@ -131,6 +131,10 @@
                             name="filter_state"
                             string="Need Action"
                             domain="[('state', 'not in', ['closed'])]"/>
+                    <filter
+                            name="filter_commitment"
+                            string="Commitment CEAR Need Action"
+                            domain="[('is_commitment', =', True)]"/>
                 </search>
             </field>
         </record>
@@ -147,8 +151,7 @@
             <!--<field name="search_view_id" ref="search_budget"/>-->
             <field name="domain">[('is_commitment','=',True)]</field>
             <field name="context">{'form_view_ref': 'budget_capex.view_form_cear_commitment',
-                                   'search_default_filter_state': 1,
-                                   'default_is_commitment': True}
+                                   'search_default_filter_commitment': 1}
             </field>
         </record>
         <!--END ACTIONS-->
