@@ -134,7 +134,7 @@
                     <filter
                             name="filter_commitment"
                             string="Commitment CEAR Need Action"
-                            domain="[('is_commitment', =', True)]"/>
+                            domain="[('is_commitment', '=', True)]"/>
                 </search>
             </field>
         </record>

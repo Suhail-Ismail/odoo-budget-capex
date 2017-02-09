@@ -48,7 +48,7 @@
                     <filter
                             name="filter_expenditure"
                             string="Expenditure CEAR Need Action"
-                            domain="[('is_expenditure', =', True)]"/>
+                            domain="[('is_expenditure', '=', True)]"/>
                 </search>
             </field>
         </record>
@@ -62,7 +62,7 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form,pivot,graph</field>
             <field name="view_id" ref="view_tree_cear_expenditure"/>
-            <field name="search_view_id" ref="budget_capex.search_cear_commitment"/>
+            <field name="search_view_id" ref="budget_capex.search_cear_expenditure"/>
             <field name="domain">[('is_expenditure','=',True)]</field>
             <field name="context">{'form_view_ref': 'budget_capex.view_form_cear_expenditure',
                                    'search_default_filter_expenditure': 1}
