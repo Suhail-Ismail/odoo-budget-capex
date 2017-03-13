@@ -29,7 +29,7 @@
                 action="action_cear_expenditure"/>
             <menuitem
                 id="menu_progress_left_left"
-                name="Progress"
+                name="PCC"
                 sequence="3"
                 parent="menu_cear_left"
                 action="action_progress"/>
