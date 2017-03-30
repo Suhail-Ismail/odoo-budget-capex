@@ -46,6 +46,7 @@ Summary
         'views/cear_expenditure.xml',
         'views/progress.xml',
 
+        'views/contract_inherit.xml',
         'views/budget_inherit.xml',
 
         'workflows/budget_capex_cear.xml',

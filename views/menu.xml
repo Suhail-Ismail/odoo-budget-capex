@@ -6,7 +6,8 @@
     <menuitem
         id="menu_capex_top"
         name="CAPEX"
-        sequence="5"/>
+        sequence="5"
+        groups="base.group_system,budget_capex.group_capex_user,budget_capex.group_capex_manager"/>
     <!--END MENU PARENT-->
 
     <!--MENU LEFT-->
@@ -39,7 +40,7 @@
             name="Contract"
             sequence="2"
             parent="menu_capex_top"
-            action="budget_contractor.action_contract"/>
+            action="action_contract"/>
 
         <menuitem
             id="menu_project_left"
@@ -49,8 +50,8 @@
             />
 
         <menuitem
-            id="menu_cwip_left"
-            name="CWIP"
+            id="menu_cwp_left"
+            name="CWP"
             sequence="1"
             parent="menu_project_left"
             action="budget_core.action_budget_inherit_project"/>

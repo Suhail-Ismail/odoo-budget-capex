@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--START VIEWS-->
+        <!--START SEARCH VIEW-->
+        <record model="ir.ui.view" id="view_search_contract">
+            <field name="name">budget.contractor.contract.search</field>
+            <field name="model">budget.contractor.contract</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="contract_ref"/>
+                    <field name="contractor_id"/>
+                    <filter
+                            name="filter_state"
+                            string="Need Action"
+                            domain="[('state', 'in', ['draft']),
+                                     ('is_capex','=',True)]"/>
+                </search>
+            </field>
+        </record>
+        <!--END SEARCH VIEW-->
+
+        <!--START ACTION-->
+        <record model="ir.actions.act_window" id="action_contract">
+            <field name="name">Contract</field>
+            <field name="res_model">budget.contractor.contract</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot</field>
+            <field name="view_id" ref="budget_contractor.view_tree_contract"/>
+            <field name="search_view_id" ref="view_search_contract"/>
+            <field name="context">
+                {'form_view_ref': 'budget_contractor.view_form_contract',
+                'search_default_filter_state': 1}
+            </field>
+        </record>
+        <!--END ACTION-->
+    </data>
+</odoo>
