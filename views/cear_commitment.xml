@@ -80,12 +80,25 @@
                                                                         'default_is_expenditure': True}"/>
                             </page>
                             <page string="PCC">
-                                <field name="progress_allocation_ids"
+                                <field name="progress_line_ids"
                                        attrs="{'readonly': 1}">
                                     <tree>
-                                        <field name="progress_id" string="PCC"/>
                                         <field name="cear_id" groups="base.group_system"/>
-                                        <field name="allocated_amount" sum="1"/>
+                                        <field name="progress_id" string="PCC"/>
+                                        <field name="amount" sum="1"/>
+                                        <field name="remarks"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Accrual">
+                                <field name="accrual_line_ids"
+                                       attrs="{'readonly': 1}">
+                                    <tree>
+                                        <field name="cear_id" groups="base.group_system"/>
+                                        <field name="accrual_id" string="Accrual"/>
+                                        <field name="milestone"/>
+                                        <field name="physical_progress" sum="1"/>
+                                        <field name="work_done_amount" sum="1"/>
                                         <field name="remarks"/>
                                     </tree>
                                 </field>

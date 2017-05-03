@@ -45,6 +45,7 @@ Summary
         'views/cear_commitment.xml',
         'views/cear_expenditure.xml',
         'views/progress.xml',
+        'views/accrual.xml',
 
         'views/contract_inherit.xml',
         'views/budget_inherit.xml',

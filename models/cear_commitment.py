@@ -36,10 +36,11 @@ class Cear(models.Model):
 
     # ACTUAL FROM FINANCE
     fn_utilized_amount = fields.Monetary(currency_field='company_currency_id',
-                                             string='Utilized Amount (FN)')
+                                         string='Utilized Amount (FN)')
     # ACTUAL FROM FINANCE
     authorized_amount = fields.Monetary(currency_field='company_currency_id',
                                         string='Authorized Amount')
+
     # RELATIONSHIPS
     # ----------------------------------------------------------
     company_currency_id = fields.Many2one('res.currency', readonly=True,
@@ -49,9 +50,13 @@ class Cear(models.Model):
                                       domain=[('is_expenditure', '=', True)],
                                       string="Expenditure Cears")
 
-    progress_allocation_ids = fields.One2many('budget.capex.progress.allocation',
-                                              'cear_id',
-                                              string="Allocations")
+    accrual_line_ids = fields.One2many('budget.capex.accrual.line',
+                                       'cear_id',
+                                       string="Accruals")
+
+    progress_line_ids = fields.One2many('budget.capex.progress.line',
+                                        'cear_id',
+                                        string="Progress Lines")
 
     investment_area_id = fields.Many2one('budget.capex.cear.investment.area', string="Investment Area")
     region_id = fields.Many2one('budget.enduser.region', string="Region")
@@ -60,6 +65,17 @@ class Cear(models.Model):
                                          ('state', 'not in', ['draft'])],
                                  string='Project No'
                                  )
+    # COMPUTE FIELDS
+    # ----------------------------------------------------------
+    total_pcc_amount = fields.Monetary(string='OPEX Amount',
+                                       currency_field='company_currency_id',
+                                       compute='_compute_total_pcc_amount',
+                                       store=True)
+
+    @api.one
+    @api.depends('progress_line_ids', 'progress_line_ids.amount')
+    def _compute_total_pcc_amount(self):
+        self.total_pcc_amount = sum(self.mapped('progress_line_ids.amount'))
 
     # TRANSITIONS
     # ----------------------------------------------------------
@@ -78,5 +94,8 @@ class Cear(models.Model):
     # CONSTRAINS
     # ----------------------------------------------------------
     _sql_constraints = [
-        ('uniq_no', 'UNIQUE (no)', 'Cear No Must Be unique')
+        ('uniq_no', 'UNIQUE (no)', 'Cear No Must Be unique'),
+        ('pcc_less_or_eq_to_commitment', 'CHECK (total_pcc_amount <= commitment_amount)',
+         'PCC must be less than or equal to commitment'),
+
     ]

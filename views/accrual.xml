@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<openerp>
+    <data>
+        <!--START VIEWS-->
+        <!-- FORM VIEW-->
+        <record model="ir.ui.view" id="view_form_accrual">
+            <field name="name">Cear Accrual</field>
+            <field name="model">budget.capex.accrual</field>
+            <field name="arch" type="xml">
+                <form string="Budget">
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                        </div>
+                        <div class="oe_title">
+                            <h1>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="accrual_date"
+                                       required="1"/>
+                            </group>
+                            <group>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="remarks"/>
+                        </group>
+                        <notebook>
+                            <page string="Line">
+                                <field name="accrual_line_ids"
+                                       context="{'default_accrual_id': id}">
+                                    <tree editable="bottom">
+                                        <field name="accrual_id" groups="base.group_system"/>
+                                        <field name="cear_id"/>
+                                        <field name="milestone"/>
+                                        <field name="physical_progress" sum="1"/>
+                                        <field name="work_done_amount" sum="1"/>
+                                        <field name="remarks"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!--TREE VIEW-->
+        <record model="ir.ui.view" id="view_tree_accrual">
+            <field name="name">Cear Accrual</field>
+            <field name="model">budget.capex.accrual</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="accrual_date"/>
+                    <field name="remarks"/>
+                </tree>
+            </field>
+        </record>
+        <!--END VIEWS-->
+
+        <!--START ACTIONS-->
+        <!--Budget Action-->
+        <record model="ir.actions.act_window" id="action_accrual">
+            <field name="name">Cear Accrual</field>
+            <field name="res_model">budget.capex.accrual</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot,graph</field>
+            <field name="view_id" ref="view_tree_accrual"/>
+            <field name="context">{'form_view_ref': 'budget_capex.view_form_accrual'}</field>
+
+        </record>
+        <!--END ACTIONS-->
+    </data>
+</openerp>
