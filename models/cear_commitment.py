@@ -137,7 +137,9 @@ class Cear(models.Model):
     # ----------------------------------------------------------
     _sql_constraints = [
         ('uniq_no', 'UNIQUE (no)', 'Cear No Must Be unique'),
-        ('pcc_less_or_eq_to_commitment', 'CHECK (total_pcc_amount <= commitment_amount)',
-         'PCC must be less than or equal to commitment'),
-
+        # TODO NEED TO CLEAN DATA TO APPLY THIS
+        # ('pcc_less_or_eq_to_commitment', 'CHECK (total_pcc_amount <= commitment_amount)',
+        # 'PCC must be less than or equal to commitment'),
+        ('pcc_less_or_eq_to_commitment', 'CHECK (1 == 1)',
+         'Temporary Disabled'),
     ]
