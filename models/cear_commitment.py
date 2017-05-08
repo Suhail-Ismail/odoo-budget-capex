@@ -19,20 +19,29 @@ class Cear(models.Model):
     # BASIC FIELDS
     # ----------------------------------------------------------
     is_commitment = fields.Boolean('Is Commitment')
+    is_recharge = fields.Boolean('Is Recharge')
+    is_unforseen = fields.Boolean('Is Unforseen')
+    is_non_engineering = fields.Boolean('Is Non Engineering')
+
     state = fields.Selection(STATES, default='draft')
     category = fields.Char(string="Category")
     year = fields.Selection(string='Year', selection=YEARS, default=year_now)
 
     no = fields.Char(string="Cear No", required=True)
     description = fields.Text(string="Cear Description")
+    pec_no = fields.Char(string="Pec No")
+    remarks = fields.Text(string="Remarks")
+    system_note = fields.Text(string="System Note")
+
+    completion_date = fields.Date(string="Completion Date")
+    rfs_date = fields.Date(string="RFS Date")
     start_date = fields.Date(string="Cear Start Date")
+    pec_no_date = fields.Date(string="Pec No Date")
 
     expenditure_amount = fields.Monetary(currency_field='company_currency_id',
                                          string='Expenditure Amount')
     commitment_amount = fields.Monetary(currency_field='company_currency_id',
                                         string='Commitment Amount')
-    pec_no = fields.Char(string="Pec No")
-    remarks = fields.Text(string="Remarks")
 
     # ACTUAL FROM FINANCE
     fn_utilized_amount = fields.Monetary(currency_field='company_currency_id',
@@ -49,33 +58,66 @@ class Cear(models.Model):
                                       'commitment_id',
                                       domain=[('is_expenditure', '=', True)],
                                       string="Expenditure Cears")
-
     accrual_line_ids = fields.One2many('budget.capex.accrual.line',
                                        'cear_id',
                                        string="Accruals")
-
     progress_line_ids = fields.One2many('budget.capex.progress.line',
                                         'cear_id',
                                         string="Progress Lines")
+    contract_ids = fields.Many2many('budget.contractor.contract',
+                                    'budget_cear_cear_contract',
+                                    'cear_id',
+                                    'contract_id',
+                                    string='Contracts')
+    contractor_ids = fields.Many2many('budget.contractor.contractor',
+                                      'budget_cear_cear_contractor',
+                                      'cear_id',
+                                      'contractor_id',
+                                      string='Contractors')
 
     investment_area_id = fields.Many2one('budget.capex.cear.investment.area', string="Investment Area")
+    section_id = fields.Many2one('budget.enduser.section', string="Section")
+    sub_section_id = fields.Many2one('budget.enduser.sub.section', string="Sub Section")
     region_id = fields.Many2one('budget.enduser.region', string="Region")
     project_id = fields.Many2one('budget.core.budget',
                                  domain=[('is_project', '=', True),
                                          ('state', 'not in', ['draft'])],
                                  string='Project No'
                                  )
+
+    # ONCHANGE FIELDS
+    # ----------------------------------------------------------
+    @api.onchange('contract_ids')
+    def _onchange_contract_id(self):
+        self.contractor_ids |= self.mapped('contract_ids.contractor_id')
+
+    @api.onchange('sub_section_id')
+    def _onchange_sub_section_id(self):
+        self.section_id = self.sub_section_id.section_id
+
     # COMPUTE FIELDS
     # ----------------------------------------------------------
-    total_pcc_amount = fields.Monetary(string='OPEX Amount',
+    total_pcc_amount = fields.Monetary(string='Total PCC Amount',
                                        currency_field='company_currency_id',
                                        compute='_compute_total_pcc_amount',
                                        store=True)
 
+    total_accrual_amount = fields.Monetary(string='Total Accrual Amount',
+                                           currency_field='company_currency_id',
+                                           compute='_compute_total_accrual_amount',
+                                           store=True)
+
+    # COMPUTE FUNCTION
+    # ----------------------------------------------------------
     @api.one
     @api.depends('progress_line_ids', 'progress_line_ids.amount')
     def _compute_total_pcc_amount(self):
         self.total_pcc_amount = sum(self.mapped('progress_line_ids.amount'))
+
+    @api.one
+    @api.depends('accrual_line_ids', 'accrual_line_ids.amount')
+    def _compute_total_accrual_amount(self):
+        self.total_accrual_amount = sum(self.mapped('progress_line_ids.amount'))
 
     # TRANSITIONS
     # ----------------------------------------------------------

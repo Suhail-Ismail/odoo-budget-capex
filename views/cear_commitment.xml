@@ -37,71 +37,97 @@
                             <group group="base.group_system">
                                 <field name="is_commitment"/>
                                 <field name="write_date"/>
+                                <field name="system_note"/>
                             </group>
                             <h1>
                                 <field name="no" default_focus="1" placeholder="Cear No"/>
                             </h1>
                         </div>
-                        <group string="General">
-                            <group>
-                                <field name="project_id" context="{'default_is_project': True}"/>
-                                <field name="region_id"/>
-                                <field name="category"/>
-                                <field name="year"/>
-                            </group>
-                            <group>
-                                <field name="start_date"/>
-                                <field name="investment_area_id"
-                                       options="{'no_create_edit': True, 'no_open': True}"/>
-                                <field name="pec_no"/>
-                            </group>
-                            <group>
-                                <field name="expenditure_amount"/>
-                            </group>
-                            <group>
-                                <field name="commitment_amount"/>
-                            </group>
-                        </group>
-                            <group>
-                                <field name="description"/>
-                            </group>
-                            <group>
-                                <field name="remarks"/>
-                            </group>
-                        <group string="Summary">
-                            <group attrs="{'invisible': [('write_date', '==', False)]}">
-                                <field name="fn_utilized_amount"/>
-                                <field name="authorized_amount"/>
-                            </group>
-                        </group>
                         <notebook>
-                            <page string="Expenditure" attrs="{'invisible': [('is_commitment', '!=', True)]}">
-                                <field name="expenditure_ids" context="{'default_commitment_id': id,
-                                                                        'default_is_expenditure': True}"/>
+                            <page string="General">
+                                <group>
+                                    <group>
+                                        <field name="contract_ids" widget="many2many_tags"
+                                               options="{'no_create': True}"/>
+                                        <field name="contractor_ids" widget="many2many_tags"
+                                               options="{'no_create': True}"/>
+                                        <field name="sub_section_id" options="{'no_create': True}"/>
+                                        <field name="section_id" options="{'no_create': True}"/>
+                                    </group>
+                                    <group>
+                                        <field name="project_id" options="{'no_create': True}"/>
+                                        <field name="region_id" options="{'no_create': True}"/>
+                                        <field name="category"/>
+                                        <field name="year"/>
+                                        <field name="pec_no"/>
+                                    </group>
+                                </group>
+                                <group>
+                                    <group>
+                                        <field name="start_date"/>
+                                        <field name="completion_date"/>
+                                        <field name="rfs_date"/>
+                                        <!--<field name="investment_area_id"-->
+                                        <!--options="{'no_create_edit': True, 'no_open': True}"/>-->
+                                    </group>
+                                    <group>
+                                        <field name="pec_no_date"/>
+                                    </group>
+                                </group>
+                                <group>
+                                    <field name="description"/>
+                                </group>
+                                <group>
+                                    <field name="remarks"/>
+                                </group>
                             </page>
-                            <page string="PCC">
-                                <field name="progress_line_ids"
-                                       attrs="{'readonly': 1}">
-                                    <tree>
-                                        <field name="cear_id" groups="base.group_system"/>
-                                        <field name="progress_id" string="PCC"/>
-                                        <field name="amount" sum="1"/>
-                                        <field name="remarks"/>
-                                    </tree>
-                                </field>
+                            <page string="Financial" name="financial">
+                                <group>
+                                    <group>
+                                        <field name="expenditure_amount"/>
+                                    </group>
+                                    <group>
+                                        <field name="commitment_amount"/>
+                                    </group>
+                                </group>
+                                <notebook>
+                                    <page string="Expenditure" attrs="{'invisible': [('is_commitment', '!=', True)]}">
+                                        <field name="expenditure_ids" context="{'default_commitment_id': id,
+                                                                                'default_is_expenditure': True}"/>
+                                    </page>
+                                    <page string="PCC">
+                                        <field name="progress_line_ids"
+                                               attrs="{'readonly': 1}">
+                                            <tree>
+                                                <field name="cear_id" groups="base.group_system"/>
+                                                <field name="progress_id" string="PCC"/>
+                                                <field name="amount" sum="1"/>
+                                                <field name="remarks"/>
+                                            </tree>
+                                        </field>
+                                    </page>
+                                    <page string="Accrual">
+                                        <field name="accrual_line_ids"
+                                               attrs="{'readonly': 1}">
+                                            <tree>
+                                                <field name="cear_id" groups="base.group_system"/>
+                                                <field name="accrual_id" string="Accrual"/>
+                                                <field name="milestone"/>
+                                                <field name="physical_progress" sum="1"/>
+                                                <field name="amount" sum="1"/>
+                                                <field name="remarks"/>
+                                            </tree>
+                                        </field>
+                                    </page>
+                                </notebook>
                             </page>
-                            <page string="Accrual">
-                                <field name="accrual_line_ids"
-                                       attrs="{'readonly': 1}">
-                                    <tree>
-                                        <field name="cear_id" groups="base.group_system"/>
-                                        <field name="accrual_id" string="Accrual"/>
-                                        <field name="milestone"/>
-                                        <field name="physical_progress" sum="1"/>
-                                        <field name="work_done_amount" sum="1"/>
-                                        <field name="remarks"/>
-                                    </tree>
-                                </field>
+                            <page string="Summary" attrs="{'invisible': [('write_date', '==', False)]}">
+                                <group>
+                                    <field name="fn_utilized_amount"/>
+                                    <field name="authorized_amount"/>
+                                    <field name="total_pcc_amount"/>
+                                    <field name="total_accrual_amount"/>
+                                </group>
                             </page>
                         </notebook>
                     </sheet>
@@ -165,7 +191,7 @@
             <field name="search_view_id" ref="budget_capex.search_cear_commitment"/>
             <field name="domain"></field>
             <field name="context">{'form_view_ref': 'budget_capex.view_form_cear_commitment',
-                                   'search_default_filter_commitment': 1}
+                'search_default_filter_commitment': 1}
             </field>
         </record>
         <!--END ACTIONS-->

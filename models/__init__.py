@@ -2,7 +2,7 @@
 
 # INHERITANCE MODELS FROM OTHER MODULE
 # ----------------------------------------------------------
-from . import budget_inherit
+from . import budget_inherit, contract_inherit, contractor_inherit
 
 # BASIC MODELS
 # ----------------------------------------------------------

@@ -22,10 +22,10 @@ class AccrualLine(models.Model):
     milestone = fields.Char(string='Milestone',
                             help="Milestone completed against progress % (ie. Delivery + Partial service, RFS, PAC, "
                                  "etc)")
-    work_done_amount = fields.Monetary(string='Work Done Value',
-                                       currency_field='company_currency_id',
-                                       help="Value of Equipment or Services physically received in store or at site.",
-                                       store=True)
+    amount = fields.Monetary(string='Work Done Value',
+                             currency_field='company_currency_id',
+                             help="Value of Equipment or Services physically received in store or at site.",
+                             store=True)
     remarks = fields.Text(string="Remarks")
 
     # RELATED FIELDS

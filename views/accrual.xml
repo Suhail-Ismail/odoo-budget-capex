@@ -36,7 +36,7 @@
                                         <field name="cear_id"/>
                                         <field name="milestone"/>
                                         <field name="physical_progress" sum="1"/>
-                                        <field name="work_done_amount" sum="1"/>
+                                        <field name="amount" sum="1"/>
                                         <field name="remarks"/>
                                     </tree>
                                 </field>
