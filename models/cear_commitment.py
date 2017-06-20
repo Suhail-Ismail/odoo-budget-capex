@@ -76,6 +76,8 @@ class Cear(models.Model):
                                       string='Contractors')
 
     investment_area_id = fields.Many2one('budget.capex.cear.investment.area', string="Investment Area")
+    # TODO TRASFERING SECTION TO DIVISION
+    division_id = fields.Many2one('budget.enduser.section', string="Division")
     section_id = fields.Many2one('budget.enduser.section', string="Section")
     sub_section_id = fields.Many2one('budget.enduser.sub.section', string="Sub Section")
     region_id = fields.Many2one('budget.enduser.region', string="Region")
@@ -91,6 +93,7 @@ class Cear(models.Model):
     def _onchange_contract_id(self):
         self.contractor_ids |= self.mapped('contract_ids.contractor_id')
 
+    # TODO NEED TO FIX THIS FUNCTION TO REPLACE SECTION TO DIVISION
     @api.onchange('sub_section_id')
     def _onchange_sub_section_id(self):
         self.section_id = self.sub_section_id.section_id

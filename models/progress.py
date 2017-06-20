@@ -35,13 +35,15 @@ class Progress(models.Model):
     progress_line_ids = fields.One2many('budget.capex.progress.line',
                                         'progress_id',
                                         string="Progress Lines")
-
     project_id = fields.Many2one('budget.core.budget', string='CWP', domain=[('is_project', '=', True)])
+    # TODO TRASFERING SECTION TO DIVISION
+    division_id = fields.Many2one('budget.enduser.section', string="Division")
     section_id = fields.Many2one('budget.enduser.section', string='Section')
     sub_section_id = fields.Many2one('budget.enduser.sub.section', string='Sub Section')
 
     # ONCHANGE FIELDS
     # ----------------------------------------------------------
+    # TODO NEED TO FIX THIS FUNCTION TO REPLACE SECTION TO DIVISION
     @api.multi
     @api.onchange('project_id')
     def onchange_budget_line_ids(self):

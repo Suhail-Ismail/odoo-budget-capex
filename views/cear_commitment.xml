@@ -51,8 +51,9 @@
                                                options="{'no_create': True}"/>
                                         <field name="contractor_ids" widget="many2many_tags"
                                                options="{'no_create': True}"/>
-                                        <field name="sub_section_id" options="{'no_create': True}"/>
+                                        <field name="division_id" options="{'no_create': True}"/>
                                         <field name="section_id" options="{'no_create': True}"/>
+                                        <field name="sub_section_id" options="{'no_create': True}"/>
                                     </group>
                                     <group>
                                         <field name="project_id" options="{'no_create': True}"/>

@@ -26,6 +26,9 @@
                                        options="{'no_create': True}"/>
                             </group>
                             <group>
+                                <field name="division_id"
+                                       options="{'no_create': True}"
+                                       required="1"/>
                                 <field name="section_id"
                                        options="{'no_create': True}"
                                        required="1"/>
