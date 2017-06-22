@@ -11,12 +11,14 @@ class Progress(models.Model):
     _rec_name = 'reference_no'
     _description = 'Cear Progress'
     _order = 'progress_date'
+    _inherit = ['budget.enduser.mixin']
 
     # CHOICES
     # ----------------------------------------------------------
 
     # BASIC FIELDS
     # ----------------------------------------------------------
+    # division_id, section_id, sub_section_id exist in enduser.mixin
     reference_no = fields.Char(string='Reference No')
     is_initial = fields.Boolean(string='Is Initial')
     progress_date = fields.Date(string="Date")
@@ -36,19 +38,15 @@ class Progress(models.Model):
                                         'progress_id',
                                         string="Progress Lines")
     project_id = fields.Many2one('budget.core.budget', string='CWP', domain=[('is_project', '=', True)])
-    # TODO TRASFERING SECTION TO DIVISION
-    division_id = fields.Many2one('budget.enduser.section', string="Division")
-    section_id = fields.Many2one('budget.enduser.section', string='Section')
-    sub_section_id = fields.Many2one('budget.enduser.sub.section', string='Sub Section')
 
     # ONCHANGE FIELDS
     # ----------------------------------------------------------
-    # TODO NEED TO FIX THIS FUNCTION TO REPLACE SECTION TO DIVISION
     @api.multi
     @api.onchange('project_id')
     def onchange_budget_line_ids(self):
+        # division_id, section_id exist in enduser.mixin
+        self.division_id = self.project_id.division_id
         self.section_id = self.project_id.section_id
-        self.sub_section_id = self.project_id.sub_section_id
 
     # COMPUTE FIELDS
     # ----------------------------------------------------------

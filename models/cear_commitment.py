@@ -8,16 +8,17 @@ class Cear(models.Model):
     _name = 'budget.capex.cear'
     _rec_name = 'no'
     _description = 'Cear'
-    _inherit = ['mail.thread']
+    _inherit = ['mail.thread', 'budget.enduser.mixin']
 
     # CHOICES
     # ----------------------------------------------------------
     year_now = fields.Datetime.from_string(fields.Date.today()).year
-    YEARS = [(year, year) for year in range(year_now - 10, year_now + 10)]
+    YEARS = [(year, year) for year in range(1950, 2050)]
     STATES = choices_tuple(['draft', 'under process', 'authorized', 'closed'], is_sorted=False)
 
     # BASIC FIELDS
     # ----------------------------------------------------------
+    # division_id, section_id, sub_section_id exist in enduser.mixin
     is_commitment = fields.Boolean('Is Commitment')
     is_recharge = fields.Boolean('Is Recharge')
     is_unforseen = fields.Boolean('Is Unforseen')
@@ -76,10 +77,6 @@ class Cear(models.Model):
                                       string='Contractors')
 
     investment_area_id = fields.Many2one('budget.capex.cear.investment.area', string="Investment Area")
-    # TODO TRASFERING SECTION TO DIVISION
-    division_id = fields.Many2one('budget.enduser.section', string="Division")
-    section_id = fields.Many2one('budget.enduser.section', string="Section")
-    sub_section_id = fields.Many2one('budget.enduser.sub.section', string="Sub Section")
     region_id = fields.Many2one('budget.enduser.region', string="Region")
     project_id = fields.Many2one('budget.core.budget',
                                  domain=[('is_project', '=', True),
@@ -92,11 +89,6 @@ class Cear(models.Model):
     @api.onchange('contract_ids')
     def _onchange_contract_id(self):
         self.contractor_ids |= self.mapped('contract_ids.contractor_id')
-
-    # TODO NEED TO FIX THIS FUNCTION TO REPLACE SECTION TO DIVISION
-    @api.onchange('sub_section_id')
-    def _onchange_sub_section_id(self):
-        self.section_id = self.sub_section_id.section_id
 
     # COMPUTE FIELDS
     # ----------------------------------------------------------
