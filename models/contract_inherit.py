@@ -17,4 +17,4 @@ class Contract(models.Model):
 
     # COMPUTE FIELDS
     # ----------------------------------------------------------
-    # company_currency_id exist in the main contract model
+    # currency_id exist in the main contract model

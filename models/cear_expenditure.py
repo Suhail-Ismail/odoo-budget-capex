@@ -14,7 +14,7 @@ class CearExpenditure(models.Model):
 
     # BASIC FIELDS
     # ----------------------------------------------------------
-    # company_currency_id exist in cear_commitment
+    # currency_id exist in cear_commitment
     is_expenditure = fields.Boolean(string='Is Expenditure')
 
     # RELATIONSHIPS

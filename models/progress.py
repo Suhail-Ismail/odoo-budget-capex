@@ -32,7 +32,7 @@ class Progress(models.Model):
 
     # RELATIONSHIPS
     # ----------------------------------------------------------
-    company_currency_id = fields.Many2one('res.currency', readonly=True,
+    currency_id = fields.Many2one('res.currency', readonly=True,
                                           default=lambda self: self.env.user.company_id.currency_id)
     progress_line_ids = fields.One2many('budget.capex.progress.line',
                                         'progress_id',
@@ -52,7 +52,7 @@ class Progress(models.Model):
     # ----------------------------------------------------------
     progress_amount = fields.Monetary(string='Progress Amount',
                                       compute='_compute_progress_amount',
-                                      currency_field='company_currency_id',
+                                      currency_field='currency_id',
                                       store=True)
 
     @api.one

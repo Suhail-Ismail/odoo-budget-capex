@@ -23,7 +23,7 @@ class ProgressLine(models.Model):
     rfs_date = fields.Date(string="RFS Date")
     name = fields.Char(string='Name')
     amount = fields.Monetary(string='Amount',
-                             currency_field='company_currency_id',
+                             currency_field='currency_id',
                              store=True)
     remarks = fields.Text(string="Remarks")
 
@@ -35,7 +35,7 @@ class ProgressLine(models.Model):
 
     # RELATIONSHIPS
     # ----------------------------------------------------------
-    company_currency_id = fields.Many2one('res.currency', readonly=True,
+    currency_id = fields.Many2one('res.currency', readonly=True,
                                           default=lambda self: self.env.user.company_id.currency_id)
     cear_id = fields.Many2one('budget.capex.cear',
                               string='Cear No')

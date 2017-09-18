@@ -22,22 +22,22 @@ class BudgetInherit(models.Model):
     # COMPUTE FIELDS
     # ----------------------------------------------------------
     # total_cear_expenditure_amount = fields.Monetary(compute='_compute_total_cear_expenditure_amount',
-    #                                                 currency_field='company_currency_id',
+    #                                                 currency_field='currency_id',
     #                                                 string='Total Cear Expenditure Amount',
     #                                                 store=True)
     #
     # total_cear_commitment_amount = fields.Monetary(compute='_compute_total_cear_commitment_amount',
-    #                                                currency_field='company_currency_id',
+    #                                                currency_field='currency_id',
     #                                                string='Total Cear Commitment Amount',
     #                                                store=True)
     #
     # balance_expenditure_amount = fields.Monetary(compute='_compute_balance_expenditure_amount',
-    #                                              currency_field='company_currency_id',
+    #                                              currency_field='currency_id',
     #                                              string='Balance Commitment Amount',
     #                                              store=True)
     #
     # balance_commitment_amount = fields.Monetary(compute='_compute_balance_commitment_amount',
-    #                                             currency_field='company_currency_id',
+    #                                             currency_field='currency_id',
     #                                             string='Balance Commitment Amount',
     #                                             store=True)
     #

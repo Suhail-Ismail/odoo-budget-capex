@@ -39,21 +39,21 @@ class Cear(models.Model):
     start_date = fields.Date(string="Cear Start Date")
     pec_no_date = fields.Date(string="Pec No Date")
 
-    expenditure_amount = fields.Monetary(currency_field='company_currency_id',
+    expenditure_amount = fields.Monetary(currency_field='currency_id',
                                          string='Expenditure Amount')
-    commitment_amount = fields.Monetary(currency_field='company_currency_id',
+    commitment_amount = fields.Monetary(currency_field='currency_id',
                                         string='Commitment Amount')
 
     # ACTUAL FROM FINANCE
-    fn_utilized_amount = fields.Monetary(currency_field='company_currency_id',
+    fn_utilized_amount = fields.Monetary(currency_field='currency_id',
                                          string='Utilized Amount (FN)')
     # ACTUAL FROM FINANCE
-    authorized_amount = fields.Monetary(currency_field='company_currency_id',
+    authorized_amount = fields.Monetary(currency_field='currency_id',
                                         string='Authorized Amount')
 
     # RELATIONSHIPS
     # ----------------------------------------------------------
-    company_currency_id = fields.Many2one('res.currency', readonly=True,
+    currency_id = fields.Many2one('res.currency', readonly=True,
                                           default=lambda self: self.env.user.company_id.currency_id)
     expenditure_ids = fields.One2many('budget.capex.cear',
                                       'commitment_id',
@@ -93,12 +93,12 @@ class Cear(models.Model):
     # COMPUTE FIELDS
     # ----------------------------------------------------------
     total_pcc_amount = fields.Monetary(string='Total PCC Amount',
-                                       currency_field='company_currency_id',
+                                       currency_field='currency_id',
                                        compute='_compute_total_pcc_amount',
                                        store=True)
 
     total_accrual_amount = fields.Monetary(string='Total Accrual Amount',
-                                           currency_field='company_currency_id',
+                                           currency_field='currency_id',
                                            compute='_compute_total_accrual_amount',
                                            store=True)
 
