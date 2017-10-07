@@ -19,21 +19,17 @@ class Progress(models.Model):
     # BASIC FIELDS
     # ----------------------------------------------------------
     # division_id, section_id, sub_section_id exist in enduser.mixin
-    reference_no = fields.Char(string='Reference No')
-    is_initial = fields.Boolean(string='Is Initial')
+    reference_no = fields.Char(string='Reference No', default='(Reference is Auto Generated)')
     progress_date = fields.Date(string="Date")
     remarks = fields.Text(string="Remarks")
 
     # RELATED FIELDS
     # ----------------------------------------------------------
-    cwp_description = fields.Text(related='project_id.description',
-                                  string='CWP Description',
-                                  store=True)
 
     # RELATIONSHIPS
     # ----------------------------------------------------------
     currency_id = fields.Many2one('res.currency', readonly=True,
-                                          default=lambda self: self.env.user.company_id.currency_id)
+                                  default=lambda self: self.env.user.company_id.currency_id)
     progress_line_ids = fields.One2many('budget.capex.progress.line',
                                         'progress_id',
                                         string="Progress Lines")
@@ -63,5 +59,41 @@ class Progress(models.Model):
     # CONSTRAINS
     # ----------------------------------------------------------
     _sql_constraints = [
-        ('uniq_reference_no', 'UNIQUE (reference_no)', 'Reference No Exist'),
+        ('uniq_reference_no', 'UNIQUE (reference_no)', 'Reference No Must Be Unique'),
     ]
+
+    # MISC FUNCTIONS
+    # ----------------------------------------------------------
+    @api.model
+    def _generate_reference_no(self, vals):
+        progress_date = fields.Date.from_string(vals['progress_date'])
+        year = progress_date if not progress_date else progress_date.year
+        section_id = self.env['budget.enduser.section'].browse(vals['section_id'])
+        sr = 1
+
+        if year and section_id:
+            sql = """
+                SELECT * FROM (
+                  SELECT section_id, reference_no, date_part('year', progress_date) AS year
+                  FROM budget_capex_progress
+                  ORDER BY id DESC) n
+                WHERE n.year=%(year)d
+                AND n.section_id=%(section_id)d
+            """ % {
+                'year': year,
+                'section_id': section_id.id
+            }
+            self.env.cr.execute(sql)
+            result = self.env.cr.dictfetchone()
+            if result:
+                sr = result['reference_no'].split('-')[-1]
+                sr = int(sr) + 1
+
+        return '{}-{}-{:03d}'.format(section_id.alias, year, sr)
+
+    # POLYMORPH FUNCTIONS
+    # ----------------------------------------------------------
+    @api.model
+    def create(self, vals):
+        vals['reference_no'] = self._generate_reference_no(vals)
+        return super(Progress, self).create(vals)

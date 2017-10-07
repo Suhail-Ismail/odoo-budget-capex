@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+    <data>
+        <!--START VIEWS-->
+        <!--FORM VIEW-->
+        <record model="ir.ui.view" id="view_form_cear">
+            <field name="name">budget.capex.cear</field>
+            <field name="model">budget.capex.cear</field>
+            <field name="arch" type="xml">
+                <form string="Cear">
+                    <header>
+                        <button
+                                string="Process"
+                                name="process"
+                                type="workflow"
+                                states="draft"/>
+                        <button
+                                string="Authorize"
+                                name="authorize"
+                                type="workflow"
+                                states="under process"/>
+                        <button
+                                string="Close"
+                                name="close"
+                                type="workflow"
+                                states="authorized"/>
+                        <field name="state" widget="statusbar"
+                               statusbar_visible="draft,under process,authorized,closed"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button class="oe_stat_button"
+                                    name="show_child_cears"
+                                    type="object"
+                                    string="Child Cears"
+                                    icon="fa-list"/>
+                            <button class="oe_stat_button"
+                                    name="show_related_cears"
+                                    type="object"
+                                    string="Related Cears"
+                                    icon="fa-list"/>
+                        </div>
+                        <div class="oe_title">
+                            <group groups="base.group_no_one">
+                                <field name="is_commitment"/>
+                                <field name="is_expenditure"/>
+                                <field name="write_date"/>
+                                <field name="system_note"/>
+                            </group>
+                            <h1>
+                                <field name="no" default_focus="1" placeholder="Cear No"/>
+                            </h1>
+                        </div>
+                        <notebook>
+                            <page string="General">
+                                <group>
+                                    <group>
+                                        <field name="commitment_amount" string="Commitment"/>
+                                    </group>
+                                    <group>
+                                        <field name="expenditure_amount" string="Expenditure"/>
+                                    </group>
+                                </group>
+                                <group>
+                                    <group>
+                                        <field name="parent_id"
+                                               options="{'no_create': True}"/>
+                                        <field name="contract_ids" widget="many2many_tags"
+                                               options="{'no_create': True}"/>
+                                        <field name="contractor_ids" widget="many2many_tags"
+                                               options="{'no_create': True}"/>
+                                        <field name="division_id" options="{'no_create': True}"/>
+                                        <field name="section_id" options="{'no_create': True}"/>
+                                        <field name="sub_section_id" options="{'no_create': True}"/>
+                                    </group>
+                                    <group>
+                                        <field name="project_id" options="{'no_create': True}"/>
+                                        <field name="region_id" options="{'no_create': True}"/>
+                                        <field name="category"/>
+                                        <field name="year"/>
+                                        <field name="pec_no"/>
+                                    </group>
+                                </group>
+                                <group>
+                                    <group>
+                                        <field name="start_date"/>
+                                        <field name="completion_date"/>
+                                        <field name="rfs_date"/>
+                                    </group>
+                                    <group>
+                                        <field name="pec_no_date"/>
+                                    </group>
+                                </group>
+                                <group>
+                                    <field name="description"/>
+                                </group>
+                                <group>
+                                    <field name="remarks"/>
+                                </group>
+                            </page>
+                            <page string="PCC">
+                                <field name="progress_line_ids"
+                                       attrs="{'readonly': 1}">
+                                    <tree>
+                                        <field name="cear_id" groups="base.group_no_one"/>
+                                        <field name="progress_id" string="PCC"/>
+                                        <field name="amount" sum="1"/>
+                                        <field name="remarks"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Accrual">
+                                <field name="accrual_line_ids"
+                                       attrs="{'readonly': 1}">
+                                    <tree>
+                                        <field name="cear_id" groups="base.group_no_one"/>
+                                        <field name="accrual_id" string="Accrual"/>
+                                        <field name="milestone"/>
+                                        <field name="physical_progress" sum="1"/>
+                                        <field name="amount" sum="1"/>
+                                        <field name="remarks"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Summary">
+
+                                <group>
+                                    <group>
+                                        <field name="total_commitment_amount"
+                                               attrs="{'invisible': [('write_date','=',False)]}"
+                                               string="Total Commitment"/>
+                                    </group>
+                                    <group>
+                                        <field name="total_expenditure_amount"
+                                               attrs="{'invisible': [('write_date','=',False)]}"
+                                               string="Total Expenditure"/>
+                                    </group>
+                                </group>
+                                <group>
+                                    <group>
+                                        <field name="fn_utilized_amount" readonly="1"/>
+                                        <field name="authorized_amount" readonly="1"/>
+                                    </group>
+                                    <group>
+                                        <field name="total_pcc_amount" readonly="1"/>
+                                        <field name="total_accrual_amount" readonly="1"/>
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <!--TREE VIEW-->
+        <record model="ir.ui.view" id="view_tree_cear">
+            <field name="name">budget.capex.cear</field>
+            <field name="model">budget.capex.cear</field>
+            <field name="arch" type="xml">
+                <tree decoration-success="state not in ['closed']"
+                      decoration-muted="state in ['closed']">
+                    <field name="no"/>
+                    <field name="year"/>
+                    <field name="is_commitment" groups="base.group_no_one"/>
+                    <field name="is_expenditure" groups="base.group_no_one"/>
+                    <field name="commitment_amount" sum="1"/>
+                    <field name="expenditure_amount" sum="1"/>
+                    <field name="total_commitment_amount"/>
+                    <field name="total_expenditure_amount"/>
+                    <field name="authorized_amount" sum="1"/>
+                    <field name="fn_utilized_amount" sum="1"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <!--END CONTRACTOR VIEWS-->
+        <!--START SEARCH-->
+        <record model="ir.ui.view" id="search_cear">
+            <field name="name">Cear Search</field>
+            <field name="model">budget.capex.cear</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="no"/>
+                    <field name="category"/>
+                    <field name="state"/>
+                    <filter
+                            name="filter_state"
+                            string="Need Action"
+                            domain="[('state', 'not in', ['closed'])]"/>
+                    <separator/>
+                    <filter
+                            name="filter_commitment"
+                            string="Commitment CEAR"
+                            domain="[('is_commitment', '=', True)]"/>
+                    <filter
+                            name="filter_expenditure"
+                            string="Expenditure CEAR"
+                            domain="[('is_expenditure', '=', True)]"/>
+                </search>
+            </field>
+        </record>
+        <!--END SEARCH-->
+
+        <!--START ACTIONS-->
+        <!--Cear Action-->
+        <record model="ir.actions.act_window" id="action_cear">
+            <field name="name">Cear</field>
+            <field name="res_model">budget.capex.cear</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,pivot,graph</field>
+            <field name="view_id" ref="view_tree_cear"/>
+            <field name="search_view_id" ref="budget_capex.search_cear"/>
+            <field name="domain"></field>
+            <field name="context">{'form_view_ref': 'budget_capex.view_form_cear',
+                'search_default_filter_state': 1}
+            </field>
+        </record>
+        <!--END ACTIONS-->
+    </data>
+</odoo>

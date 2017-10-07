@@ -42,8 +42,7 @@ Summary
         'security/budget_capex.xml',
         'security/ir.model.access.csv',
 
-        'views/cear_commitment.xml',
-        'views/cear_expenditure.xml',
+        'views/cear.xml',
         'views/progress.xml',
         'views/accrual.xml',
 
