@@ -22,17 +22,14 @@ class Accrual(models.Model):
 
     # RELATED FIELDS
     # ----------------------------------------------------------
-    accrual_line_ids = fields.One2many('budget.capex.accrual.line',
-                                       'accrual_id',
-                                       string="Accrual Lines")
 
     # RELATIONSHIPS
     # ----------------------------------------------------------
     currency_id = fields.Many2one('res.currency', readonly=True,
-                                          default=lambda self: self.env.user.company_id.currency_id)
-    line_ids = fields.One2many('budget.capex.accrual.line',
-                               'accrual_id',
-                               string="Accrual Lines")
+                                  default=lambda self: self.env.user.company_id.currency_id)
+    accrual_line_ids = fields.One2many('budget.capex.accrual.line',
+                                       'accrual_id',
+                                       string="Accrual Lines")
 
     # ONCHANGE FIELDS
     # ----------------------------------------------------------

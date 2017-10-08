@@ -45,7 +45,7 @@
                                 <field name="progress_line_ids"
                                        context="{'default_progress_id': id, 'project_id': project_id}">
                                     <tree editable="bottom">
-                                        <field name="progress_id" groups="base.group_system"/>
+                                        <field name="progress_id" groups="base.group_no_one"/>
                                         <field name="asset_major"/>
                                         <field name="asset_minor"/>
                                         <field name="asset_code"/>

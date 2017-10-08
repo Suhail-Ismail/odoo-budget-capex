@@ -44,6 +44,7 @@ Summary
 
         'views/cear.xml',
         'views/progress.xml',
+        'views/progress_line.xml',
         'views/accrual.xml',
 
         'views/contract_inherit.xml',

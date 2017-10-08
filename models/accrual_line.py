@@ -15,17 +15,12 @@ class AccrualLine(models.Model):
 
     # BASIC FIELDS
     # ----------------------------------------------------------
-    physical_progress = fields.Monetary(string='Pysical Progress (%)',
-                                        currency_field='currency_id',
-                                        help='Progress in terms of work completion in percentage (ie. 60% progress)',
-                                        store=True)
-    milestone = fields.Char(string='Milestone',
-                            help="Milestone completed against progress % (ie. Delivery + Partial service, RFS, PAC, "
-                                 "etc)")
-    amount = fields.Monetary(string='Work Done Value',
-                             currency_field='currency_id',
-                             help="Value of Equipment or Services physically received in store or at site.",
-                             store=True)
+    physical_progress = fields.Float(string='Pysical Progress (%)',
+                                     digits=(5, 2),
+                                     help='Progress in terms of work completion in percentage (ie. 60% progress)')
+    milestone = fields.Char()
+    amount = fields.Monetary(string='Acrual Amount',
+                             currency_field='currency_id')
     remarks = fields.Text(string="Remarks")
 
     # RELATED FIELDS
@@ -38,6 +33,6 @@ class AccrualLine(models.Model):
     cear_id = fields.Many2one('budget.capex.cear',
                               string='Cear No')
     currency_id = fields.Many2one('res.currency', readonly=True,
-                                          default=lambda self: self.env.user.company_id.currency_id)
+                                  default=lambda self: self.env.user.company_id.currency_id)
     # CONSTRAINS
     # ----------------------------------------------------------

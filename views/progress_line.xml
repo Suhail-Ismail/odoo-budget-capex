@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+    <data>
+        <!--START VIEWS-->
+        <!-- FORM VIEW-->
+        <!--TREE VIEW-->
+        <record model="ir.ui.view" id="view_tree_progress_line">
+            <field name="name">Cear Progress Line</field>
+            <field name="model">budget.capex.progress.line</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom">
+                    <field name="progress_id"
+                           required="1"/>
+                    <field name="asset_major"/>
+                    <field name="asset_minor"/>
+                    <field name="asset_code"/>
+                    <field name="asset_description"/>
+                    <field name="cost_center_id"
+                           options="{'no_create': True, 'no_open': True}"/>
+                    <field name="cear_id"
+                           options="{'no_create': True, 'no_open': True}"
+                           required="1"/>
+                    <field name="amount" sum="1"/>
+                    <field name="rfs_date"/>
+                    <field name="remarks"/>
+                </tree>
+            </field>
+        </record>
+        <!--END VIEWS-->
+
+        <!--START ACTIONS-->
+        <!--Budget Action-->
+        <record model="ir.actions.act_window" id="action_progress_line">
+            <field name="name">Cear Progress Line</field>
+            <field name="res_model">budget.capex.progress.line</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_tree_progress_line"/>
+        </record>
+        <!--END ACTIONS-->
+    </data>
+</odoo>

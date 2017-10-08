@@ -3,9 +3,6 @@
 from psycopg2._psycopg import IntegrityError
 from odoo.tests.common import TransactionCase
 from odoo.exceptions import ValidationError
-from faker import Faker
-
-import random
 
 
 class CearTestCase(TransactionCase):
@@ -14,6 +11,11 @@ class CearTestCase(TransactionCase):
 
     def setUp(self):
         super(CearTestCase, self).setUp()
+        self.project_id = self.env['budget.core.budget'].create({'project_no': 'sample cwp', 'is_project': True})
+        self.division_id = self.env['budget.enduser.division'].create({'name': 'Division', 'alias': 'division'})
+        self.section_id = self.env['budget.enduser.section'].create({'name': 'Section',
+                                                                     'alias': 'section',
+                                                                     'division_id': self.division_id.id})
 
     def create_cear(self, no='', commitment_amount=0.0, expenditure_amount=0.0, parent_id=False):
         return self.env['budget.capex.cear'].create({
@@ -126,3 +128,121 @@ class CearTestCase(TransactionCase):
 
         self.assertEqual(expenditure_a.total_expenditure_amount, 29000.0)
         self.assertEqual(expenditure_b.total_expenditure_amount, 29000.0)
+
+    def test_total_pcc(self):
+        cear_a = self.create_cear('Progress CEAR A', 100000.0, 0.0)
+        cear_b = self.create_cear('Progress CEAR B', 10000.0, 0.0, cear_a.id)
+        cear_c = self.create_cear('Progress CEAR C', 10000.0, 0.0, cear_a.id)
+        cear_d = self.create_cear('Progress CEAR D', 10000.0, 0.0, cear_a.id)
+        cear_e = self.create_cear('Progress CEAR E', 10000.0, 0.0, cear_d.id)
+        cear_f = self.create_cear('Progress CEAR F', 10000.0, 0.0, cear_d.id)
+
+        self.env['budget.capex.progress'].create({
+            'progress_date': '2018-08-08',
+            'project_id': self.project_id.id,
+            'division_id': self.division_id.id,
+            'section_id': self.section_id.id,
+            'progress_line_ids': [
+                (0, 0, {'cear_id': cear_f.id, 'amount': 6000.0}),
+                (0, 0, {'cear_id': cear_f.id, 'amount': 5000.0}),
+                (0, 0, {'cear_id': cear_f.id, 'amount': 4000.0}),
+
+                (0, 0, {'cear_id': cear_e.id, 'amount': 6000.0}),
+                (0, 0, {'cear_id': cear_e.id, 'amount': 5000.0}),
+                (0, 0, {'cear_id': cear_e.id, 'amount': 4000.0}),
+
+                (0, 0, {'cear_id': cear_d.id, 'amount': 6000.0}),
+                (0, 0, {'cear_id': cear_d.id, 'amount': 5000.0}),
+                (0, 0, {'cear_id': cear_d.id, 'amount': 4000.0}),
+
+                (0, 0, {'cear_id': cear_c.id, 'amount': 6000.0}),
+                (0, 0, {'cear_id': cear_c.id, 'amount': 5000.0}),
+                (0, 0, {'cear_id': cear_c.id, 'amount': 4000.0}),
+
+                (0, 0, {'cear_id': cear_b.id, 'amount': 6000.0}),
+                (0, 0, {'cear_id': cear_b.id, 'amount': 5000.0}),
+                (0, 0, {'cear_id': cear_b.id, 'amount': 4000.0}),
+
+                (0, 0, {'cear_id': cear_a.id, 'amount': 6000.0}),
+                (0, 0, {'cear_id': cear_a.id, 'amount': 5000.0}),
+                (0, 0, {'cear_id': cear_a.id, 'amount': 4000.0}),
+            ],
+        })
+
+        self.assertEqual(cear_f.total_pcc_amount, 15000.0)
+        self.assertEqual(cear_e.total_pcc_amount, 15000.0)
+        self.assertEqual(cear_d.total_pcc_amount, 45000.0)
+        self.assertEqual(cear_c.total_pcc_amount, 15000.0)
+        self.assertEqual(cear_b.total_pcc_amount, 15000.0)
+        self.assertEqual(cear_a.total_pcc_amount, 90000.0)
+
+    def test_percent_pcc(self):
+        cear_a = self.create_cear('Percent PCC CEAR A', 100000.0, 100000.0)
+        self.env['budget.capex.progress'].create({
+            'progress_date': '2018-08-08',
+            'project_id': self.project_id.id,
+            'division_id': self.division_id.id,
+            'section_id': self.section_id.id,
+            'progress_line_ids': [
+                (0, 0, {'cear_id': cear_a.id, 'amount': 6000.0}),
+                (0, 0, {'cear_id': cear_a.id, 'amount': 5000.0}),
+                (0, 0, {'cear_id': cear_a.id, 'amount': 4000.0}),
+            ],
+        })
+        self.assertEqual(cear_a.percent_pcc, 15.0)
+
+    def test_total_accrual(self):
+        cear_a = self.create_cear('Accrual CEAR A', 100000.0, 0.0)
+        cear_b = self.create_cear('Accrual CEAR B', 10000.0, 0.0, cear_a.id)
+        cear_c = self.create_cear('Accrual CEAR C', 10000.0, 0.0, cear_a.id)
+        cear_d = self.create_cear('Accrual CEAR D', 10000.0, 0.0, cear_a.id)
+        cear_e = self.create_cear('Accrual CEAR E', 10000.0, 0.0, cear_d.id)
+        cear_f = self.create_cear('Accrual CEAR F', 10000.0, 0.0, cear_d.id)
+
+        self.env['budget.capex.accrual'].create({
+            'accrual_date': '2018-08-08',
+            'accrual_line_ids': [
+                (0, 0, {'cear_id': cear_f.id, 'amount': 6000.0}),
+                (0, 0, {'cear_id': cear_f.id, 'amount': 5000.0}),
+                (0, 0, {'cear_id': cear_f.id, 'amount': 4000.0}),
+
+                (0, 0, {'cear_id': cear_e.id, 'amount': 6000.0}),
+                (0, 0, {'cear_id': cear_e.id, 'amount': 5000.0}),
+                (0, 0, {'cear_id': cear_e.id, 'amount': 4000.0}),
+
+                (0, 0, {'cear_id': cear_d.id, 'amount': 6000.0}),
+                (0, 0, {'cear_id': cear_d.id, 'amount': 5000.0}),
+                (0, 0, {'cear_id': cear_d.id, 'amount': 4000.0}),
+
+                (0, 0, {'cear_id': cear_c.id, 'amount': 6000.0}),
+                (0, 0, {'cear_id': cear_c.id, 'amount': 5000.0}),
+                (0, 0, {'cear_id': cear_c.id, 'amount': 4000.0}),
+
+                (0, 0, {'cear_id': cear_b.id, 'amount': 6000.0}),
+                (0, 0, {'cear_id': cear_b.id, 'amount': 5000.0}),
+                (0, 0, {'cear_id': cear_b.id, 'amount': 4000.0}),
+
+                (0, 0, {'cear_id': cear_a.id, 'amount': 6000.0}),
+                (0, 0, {'cear_id': cear_a.id, 'amount': 5000.0}),
+                (0, 0, {'cear_id': cear_a.id, 'amount': 4000.0}),
+            ],
+        })
+
+        self.assertEqual(cear_f.total_accrual_amount, 15000.0)
+        self.assertEqual(cear_e.total_accrual_amount, 15000.0)
+        self.assertEqual(cear_d.total_accrual_amount, 45000.0)
+        self.assertEqual(cear_c.total_accrual_amount, 15000.0)
+        self.assertEqual(cear_b.total_accrual_amount, 15000.0)
+        self.assertEqual(cear_a.total_accrual_amount, 90000.0)
+
+    def test_percent_accrual(self):
+        cear_a = self.create_cear('Percent Accrual CEAR A', 100000.0, 100000.0)
+        self.env['budget.capex.accrual'].create({
+            'progress_date': '2018-08-08',
+            'accrual_line_ids': [
+                (0, 0, {'cear_id': cear_a.id, 'amount': 6000.0}),
+                (0, 0, {'cear_id': cear_a.id, 'amount': 5000.0}),
+                (0, 0, {'cear_id': cear_a.id, 'amount': 4000.0}),
+            ],
+        })
+        self.assertEqual(cear_a.percent_accrual, 15.0)

@@ -36,9 +36,30 @@
                                     string="Child Cears"
                                     icon="fa-list"/>
                             <button class="oe_stat_button"
+                                    name="show_child_pccs"
+                                    type="object"
+                                    string="Child PCCs"
+                                    icon="fa-list"/>
+                            <button class="oe_stat_button"
+                                    name="show_child_accruals"
+                                    type="object"
+                                    string="Child Accruals"
+                                    icon="fa-list"/>
+
+                            <button class="oe_stat_button"
                                     name="show_related_cears"
                                     type="object"
                                     string="Related Cears"
+                                    icon="fa-list"/>
+                            <button class="oe_stat_button"
+                                    name="show_related_pccs"
+                                    type="object"
+                                    string="Related PCCs"
+                                    icon="fa-list"/>
+                            <button class="oe_stat_button"
+                                    name="show_related_accruals"
+                                    type="object"
+                                    string="Related Accruals"
                                     icon="fa-list"/>
                         </div>
                         <div class="oe_title">
@@ -51,6 +72,10 @@
                             <h1>
                                 <field name="no" default_focus="1" placeholder="Cear No"/>
                             </h1>
+                            <group>
+                                <field name="percent_pcc" widget="progressbar"/>
+                                <field name="percent_accrual" widget="progressbar"/>
+                            </group>
                         </div>
                         <notebook>
                             <page string="General">
@@ -99,17 +124,6 @@
                                     <field name="remarks"/>
                                 </group>
                             </page>
-                            <page string="PCC">
-                                <field name="progress_line_ids"
-                                       attrs="{'readonly': 1}">
-                                    <tree>
-                                        <field name="cear_id" groups="base.group_no_one"/>
-                                        <field name="progress_id" string="PCC"/>
-                                        <field name="amount" sum="1"/>
-                                        <field name="remarks"/>
-                                    </tree>
-                                </field>
-                            </page>
                             <page string="Accrual">
                                 <field name="accrual_line_ids"
                                        attrs="{'readonly': 1}">
@@ -124,7 +138,6 @@
                                 </field>
                             </page>
                             <page string="Summary">
-
                                 <group>
                                     <group>
                                         <field name="total_commitment_amount"

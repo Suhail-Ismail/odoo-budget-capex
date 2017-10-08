@@ -109,12 +109,21 @@ class Cear(models.Model):
                                            currency_field='currency_id',
                                            compute='_compute_total_accrual_amount',
                                            store=True)
+    percent_pcc = fields.Float(string='Progress',
+                               digits=(5, 2),
+                               compute='_compute_percent_pcc',
+                               store=True)
+
+    percent_accrual = fields.Float(string='Accrual',
+                                   digits=(5, 2),
+                                   compute='_compute_percent_accrual',
+                                   store=True)
 
     @api.one
     @api.depends('commitment_amount', 'child_ids',
                  'child_ids.total_commitment_amount', 'child_ids.commitment_amount')
     def _compute_total_commitment_amount(self):
-        ids = self.get_related_ids()
+        ids = self.get_related_cear_ids()
         cear_ids = self.browse(ids)
         self.total_commitment_amount = sum(cear_ids.mapped('commitment_amount'))
 
@@ -122,30 +131,55 @@ class Cear(models.Model):
     @api.depends('expenditure_amount', 'child_ids',
                  'child_ids.total_expenditure_amount', 'child_ids.expenditure_amount')
     def _compute_total_expenditure_amount(self):
-        ids = self.get_related_ids()
+        ids = self.get_related_cear_ids()
         cear_ids = self.browse(ids)
         self.total_expenditure_amount = sum(cear_ids.mapped('expenditure_amount'))
 
     @api.one
-    @api.depends('progress_line_ids', 'progress_line_ids.amount')
+    @api.depends('progress_line_ids', 'progress_line_ids.amount', 'child_ids.total_pcc_amount')
     def _compute_total_pcc_amount(self):
-        self.total_pcc_amount = sum(self.mapped('progress_line_ids.amount'))
+        ids = self.get_related_cear_ids()
+        cear_ids = self.browse(ids)
+        self.total_pcc_amount = sum(cear_ids.mapped('progress_line_ids.amount'))
 
     @api.one
-    @api.depends('accrual_line_ids', 'accrual_line_ids.amount')
+    @api.depends('accrual_line_ids', 'accrual_line_ids.amount', 'child_ids.total_accrual_amount')
     def _compute_total_accrual_amount(self):
-        self.total_accrual_amount = sum(self.mapped('progress_line_ids.amount'))
+        ids = self.get_related_cear_ids()
+        cear_ids = self.browse(ids)
+        self.total_accrual_amount = sum(cear_ids.mapped('accrual_line_ids.amount'))
+
+    @api.one
+    @api.depends('total_pcc_amount', 'total_expenditure_amount')
+    def _compute_percent_pcc(self):
+        if self.total_expenditure_amount:
+            self.percent_pcc = 100 * (self.total_pcc_amount / self.total_expenditure_amount)
+        else:
+            self.percent_pcc = 0
+
+    @api.one
+    @api.depends('total_accrual_amount', 'total_expenditure_amount')
+    def _compute_percent_accrual(self):
+        if self.total_expenditure_amount:
+            self.percent_accrual = 100 * (self.total_accrual_amount / self.total_expenditure_amount)
+        else:
+            self.percent_accrual = 0
 
     # CONSTRAINS
     # ----------------------------------------------------------
     _sql_constraints = [
         ('uniq_no', 'UNIQUE (no)', 'Cear No Must Be unique'),
-        ('pcc_less_or_eq_to_commitment', 'CHECK (1=1)', 'Temporary Disabled'),
         (
             'exp_less_or_eq_commitment',
             'CHECK (parent_id IS NOT NULL OR total_expenditure_amount <= total_commitment_amount)',
             'Expenditure <= Commitment'
         ),
+        (
+            'pcc_less_or_eq_to_commitment',
+            'CHECK (1=1)',
+            'Temporary Disabled'
+        ),
+
     ]
 
     # TRANSITIONS
@@ -164,6 +198,46 @@ class Cear(models.Model):
 
     # ACTION BUTTONS
     # ----------------------------------------------------------
+    def show_child_accruals(self):
+        tree_id = self.env.ref('budget_capex.view_tree_accrual').id
+        res = {
+            'name': 'Child Accruals',
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'tree',
+            'res_model': 'budget.capex.accrual',
+            'domain': [("cear_id", "=", self.id)],
+            'views': [(tree_id, 'tree')],
+        }
+        return res
+
+    def show_related_accruals(self):
+        ids = self.get_related_cear_ids()
+        res = self.show_child_accruals()
+        res['name'] = 'Related Accruals'
+        res['domain'] = [("cear_id", "in", ids)]
+        return res
+
+    def show_child_pccs(self):
+        tree_id = self.env.ref('budget_capex.view_tree_progress_line').id
+        res = {
+            'name': 'Child PCCs',
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'tree',
+            'res_model': 'budget.capex.progress.line',
+            'domain': [("cear_id", "=", self.id)],
+            'views': [(tree_id, 'tree')],
+        }
+        return res
+
+    def show_related_pccs(self):
+        ids = self.get_related_cear_ids()
+        res = self.show_child_pccs()
+        res['name'] = 'Related PCCs'
+        res['domain'] = [("cear_id", "in", ids)]
+        return res
+
     def show_child_cears(self):
         tree_id = self.env.ref('budget_capex.view_tree_cear').id
         form_id = self.env.ref('budget_capex.view_form_cear').id
@@ -180,7 +254,7 @@ class Cear(models.Model):
         return res
 
     def show_related_cears(self):
-        ids = self.get_related_ids()
+        ids = self.get_related_cear_ids()
         res = self.show_child_cears()
         res['name'] = 'Related CEARs'
         res['domain'] = [("id", "in", ids)]
@@ -189,7 +263,7 @@ class Cear(models.Model):
     # MISC FUNCTIONS
     # ----------------------------------------------------------
     @api.model
-    def get_related_ids(self):
+    def get_related_cear_ids(self):
         """
         get the ids related to the given cear including its own id
         """
