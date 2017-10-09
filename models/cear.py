@@ -199,13 +199,13 @@ class Cear(models.Model):
     # ACTION BUTTONS
     # ----------------------------------------------------------
     def show_child_accruals(self):
-        tree_id = self.env.ref('budget_capex.view_tree_accrual').id
+        tree_id = self.env.ref('budget_capex.view_tree_accrual_line').id
         res = {
             'name': 'Child Accruals',
             'type': 'ir.actions.act_window',
             'view_type': 'form',
             'view_mode': 'tree',
-            'res_model': 'budget.capex.accrual',
+            'res_model': 'budget.capex.accrual.line',
             'domain': [("cear_id", "=", self.id)],
             'views': [(tree_id, 'tree')],
         }

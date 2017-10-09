@@ -25,13 +25,13 @@
             <menuitem
                 id="menu_progress_left_left"
                 name="PCC"
-                sequence="3"
+                sequence="2"
                 parent="menu_cear_left"
                 action="action_progress"/>
             <menuitem
                 id="menu_accrual_left_left"
                 name="Accrual"
-                sequence="4"
+                sequence="3"
                 parent="menu_cear_left"
                 action="action_accrual"/>
 

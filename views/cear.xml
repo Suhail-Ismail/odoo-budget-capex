@@ -34,36 +34,43 @@
                                     name="show_child_cears"
                                     type="object"
                                     string="Child Cears"
+                                    context="{'default_cear_id': id}"
                                     icon="fa-list"/>
                             <button class="oe_stat_button"
                                     name="show_child_pccs"
                                     type="object"
                                     string="Child PCCs"
+                                    context="{'default_cear_id': id}"
                                     icon="fa-list"/>
                             <button class="oe_stat_button"
                                     name="show_child_accruals"
                                     type="object"
                                     string="Child Accruals"
+                                    context="{'default_cear_id': id}"
                                     icon="fa-list"/>
 
                             <button class="oe_stat_button"
                                     name="show_related_cears"
                                     type="object"
                                     string="Related Cears"
+                                    context="{'default_cear_id': id}"
                                     icon="fa-list"/>
                             <button class="oe_stat_button"
                                     name="show_related_pccs"
                                     type="object"
                                     string="Related PCCs"
+                                    context="{'default_cear_id': id}"
                                     icon="fa-list"/>
                             <button class="oe_stat_button"
                                     name="show_related_accruals"
                                     type="object"
                                     string="Related Accruals"
+                                    context="{'default_cear_id': id}"
                                     icon="fa-list"/>
                         </div>
                         <div class="oe_title">
                             <group groups="base.group_no_one">
+                                <field name="id"/>
                                 <field name="is_commitment"/>
                                 <field name="is_expenditure"/>
                                 <field name="write_date"/>
@@ -123,19 +130,6 @@
                                 <group>
                                     <field name="remarks"/>
                                 </group>
-                            </page>
-                            <page string="Accrual">
-                                <field name="accrual_line_ids"
-                                       attrs="{'readonly': 1}">
-                                    <tree>
-                                        <field name="cear_id" groups="base.group_no_one"/>
-                                        <field name="accrual_id" string="Accrual"/>
-                                        <field name="milestone"/>
-                                        <field name="physical_progress" sum="1"/>
-                                        <field name="amount" sum="1"/>
-                                        <field name="remarks"/>
-                                    </tree>
-                                </field>
                             </page>
                             <page string="Summary">
                                 <group>
@@ -230,7 +224,7 @@
             <field name="search_view_id" ref="budget_capex.search_cear"/>
             <field name="domain"></field>
             <field name="context">{'form_view_ref': 'budget_capex.view_form_cear',
-                'search_default_filter_state': 1}
+                                   'search_default_filter_state': 1}
             </field>
         </record>
         <!--END ACTIONS-->
