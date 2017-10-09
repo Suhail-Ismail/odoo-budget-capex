@@ -169,13 +169,18 @@ class Cear(models.Model):
     # ----------------------------------------------------------
     _sql_constraints = [
         ('uniq_no', 'UNIQUE (no)', 'Cear No Must Be unique'),
-        (
-            'exp_less_or_eq_commitment',
-            'CHECK (parent_id IS NOT NULL OR total_expenditure_amount <= total_commitment_amount)',
-            'Expenditure <= Commitment'
-        ),
+        # (
+        #     'exp_less_or_eq_commitment',
+        #     'CHECK (parent_id IS NOT NULL OR total_expenditure_amount <= total_commitment_amount)',
+        #     'Expenditure <= Commitment'
+        # ),
         (
             'pcc_less_or_eq_to_commitment',
+            'CHECK (1=1)',
+            'Temporary Disabled'
+        ),
+        (
+            'exp_less_or_eq_commitment',
             'CHECK (1=1)',
             'Temporary Disabled'
         ),
