@@ -165,12 +165,12 @@ class Cear(models.Model):
     @api.one
     @api.depends('real_cear_id', 'parent_id')
     def _compute_type(self):
-        if not self.real_cear_id and self.parent_id:
+        if self.has_distribution:
+            self.type = 'distributed'
+        elif not self.real_cear_id and self.parent_id:
             self.type = 'related'
         elif self.real_cear_id and self.parent_id:
             self.type = 'virtual'
-        elif self.has_distribution:
-            self.type = 'distributed'
         else:
             self.type = 'main'
 
@@ -185,7 +185,8 @@ class Cear(models.Model):
             self.unique_identifier = 'Distributed:%s' % self.no
         elif self.type == 'main':
             self.unique_identifier = 'Main:%s' % self.no
-        self.unique_identifier = False
+        else:
+            self.unique_identifier = False
 
     @api.one
     @api.depends('parent_id')
