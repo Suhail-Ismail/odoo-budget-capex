@@ -3,33 +3,41 @@
 from odoo import models, fields, api
 from odoo.addons.budget_utilities.models.utilities import choices_tuple
 
+from odoo.exceptions import ValidationError
+
 
 class Cear(models.Model):
     _name = 'budget.capex.cear'
-    _rec_name = 'no'
+    _rec_name = 'unique_identifier'
     _description = 'Cear'
     _inherit = ['mail.thread', 'budget.enduser.mixin']
+
+    # TODO DEPRECATE
+    # ----------------------------------------------------------
+    is_recharge = fields.Boolean('Is Recharge')
+    is_unforseen = fields.Boolean('Is Unforseen')
+    is_non_engineering = fields.Boolean('Is Non Engineering')
+    is_commitment = fields.Boolean('Is Commitment')
+    is_expenditure = fields.Boolean('Is Expenditure')
+    # ----------------------------------------------------------
 
     # CHOICES
     # ----------------------------------------------------------
     year_now = fields.Datetime.from_string(fields.Date.today()).year
     YEARS = [(year, year) for year in range(1950, 2050)]
     STATES = choices_tuple(['draft', 'under process', 'authorized', 'closed'], is_sorted=False)
+    TYPES = choices_tuple(['main', 'related', 'distributed', 'virtual'], is_sorted=False)
 
     # BASIC FIELDS
     # ----------------------------------------------------------
     # division_id, section_id, sub_section_id exist in enduser.mixin
-    is_commitment = fields.Boolean('Is Commitment')
-    is_expenditure = fields.Boolean(string='Is Expenditure')
-    is_recharge = fields.Boolean('Is Recharge')
-    is_unforseen = fields.Boolean('Is Unforseen')
-    is_non_engineering = fields.Boolean('Is Non Engineering')
+    has_distribution = fields.Boolean(default=False)
 
     state = fields.Selection(STATES, default='draft')
     category = fields.Char(string='Category')
     year = fields.Selection(string='Year', selection=YEARS, default=year_now)
 
-    no = fields.Char(string='Cear No', required=True)
+    no = fields.Char(string='Cear No')
     description = fields.Text(string='Cear Description')
     pec_no = fields.Char(string='Pec No')
     remarks = fields.Text(string='Remarks')
@@ -57,11 +65,23 @@ class Cear(models.Model):
     currency_id = fields.Many2one('res.currency', readonly=True,
                                   default=lambda self: self.env.user.company_id.currency_id)
     parent_id = fields.Many2one('budget.capex.cear',
-                                domain='[("id", "!=", id)]',
+                                domain='[("real_cear_id", "=", False), ("has_distribution", "=", False)]',
                                 string='Parent Cear')
     child_ids = fields.One2many('budget.capex.cear',
                                 'parent_id',
                                 string='Child Cears')
+
+    # THIS IS FOR MAKING BULK CEAR A.K.A. CREATING 1 CEAR WITH MULTIPLE LINE TO DISTRIBUTE THE AMOUNT
+    real_cear_id = fields.Many2one('budget.capex.cear',
+                                   string='Real Cear')
+    distribution_ids = fields.One2many('budget.capex.cear',
+                                       'real_cear_id',
+                                       string='Distributed Cears')
+
+    member_ids = fields.One2many('budget.capex.cear',
+                                 'group_id',
+                                 string='Member Cears')
+
     accrual_line_ids = fields.One2many('budget.capex.accrual.line',
                                        'cear_id',
                                        string='Accruals')
@@ -91,8 +111,31 @@ class Cear(models.Model):
     def _onchange_contract_id(self):
         self.contractor_ids |= self.mapped('contract_ids.contractor_id')
 
+    @api.onchange('distribution_ids')
+    def _onchange_commitment_amount(self):
+        if self.has_distribution:
+            self.commitment_amount = sum(self.mapped('distribution_ids.commitment_amount'))
+
+    @api.onchange('distribution_ids')
+    def _onchange_expenditure_amount(self):
+        if self.has_distribution:
+            self.expenditure_amount = sum(self.mapped('distribution_ids.expenditure_amount'))
+
     # COMPUTE FIELDS
     # ----------------------------------------------------------
+    # THIS IS FOR MAKING BULK CEAR A.K.A. CREATING 1 CEAR WITH MULTIPLE LINE TO DISTRIBUTE THE AMOUNT
+    unique_identifier = fields.Char(string='Unique Identifier',
+                                    compute='_compute_unique_identifier',
+                                    store=True)
+    type = fields.Selection(string='Type',
+                            selection=TYPES,
+                            compute='_compute_type',
+                            store=True)
+
+    group_id = fields.Many2one('budget.capex.cear', string='Group',
+                               compute='_compute_group_id',
+                               store=True)
+
     total_commitment_amount = fields.Monetary(string='Total Commitment',
                                               currency_field='currency_id',
                                               compute='_compute_total_commitment_amount',
@@ -118,6 +161,47 @@ class Cear(models.Model):
                                    digits=(5, 2),
                                    compute='_compute_percent_accrual',
                                    store=True)
+
+    @api.one
+    @api.depends('real_cear_id', 'parent_id')
+    def _compute_type(self):
+        if not self.real_cear_id and self.parent_id:
+            self.type = 'related'
+        elif self.real_cear_id and self.parent_id:
+            self.type = 'virtual'
+        elif self.has_distribution:
+            self.type = 'distributed'
+        else:
+            self.type = 'main'
+
+    @api.one
+    @api.depends('type', 'no', 'real_cear_id.no')
+    def _compute_unique_identifier(self):
+
+        if self.type:
+            self.unique_identifier = 'Related:%s' % self.no
+        elif self.real_cear_id and self.parent_id:
+            self.unique_identifier = 'Virtual:%s:%s' % (self.real_cear_id.no, self.parent_id.no)
+        elif self.has_distribution:
+            self.unique_identifier = 'Distributed:%s' % self.no
+        else:
+            self.unique_identifier = 'Main:%s' % self.no
+
+    @api.one
+    @api.depends('parent_id')
+    def _compute_group_id(self):
+        if self.parent_id:
+            mapped_string = 'parent_id'
+            while True:
+                cear_ids = self.mapped(mapped_string)
+                if not cear_ids:
+                    break
+                self.group_id = self.mapped(mapped_string)
+                mapped_string += '.parent_id'
+            return
+
+        self.group_id = self
+        return
 
     @api.one
     @api.depends('commitment_amount', 'child_ids',
@@ -153,27 +237,35 @@ class Cear(models.Model):
     @api.depends('total_pcc_amount', 'total_expenditure_amount')
     def _compute_percent_pcc(self):
         if self.total_expenditure_amount:
-            self.percent_pcc = 100 * (self.total_pcc_amount / self.total_expenditure_amount)
+            percent = self.total_pcc_amount / self.total_expenditure_amount
         else:
-            self.percent_pcc = 0
+            percent = 0
+        self.percent_pcc = percent * 100
 
     @api.one
     @api.depends('total_accrual_amount', 'total_expenditure_amount')
     def _compute_percent_accrual(self):
         if self.total_expenditure_amount:
-            self.percent_accrual = 100 * (self.total_accrual_amount / self.total_expenditure_amount)
+            percent = self.total_accrual_amount / self.total_expenditure_amount
         else:
-            self.percent_accrual = 0
+            percent = 0
+        self.percent_accrual = percent * 100
 
     # CONSTRAINS
     # ----------------------------------------------------------
     _sql_constraints = [
-        ('uniq_no', 'UNIQUE (no)', 'Cear No Must Be unique'),
+        ('uniq_no', 'UNIQUE (unique_identifier)',
+         'Cear No or CEAR Distribution Must Be unique'),
         # (
         #     'exp_less_or_eq_commitment',
         #     'CHECK (parent_id IS NOT NULL OR total_expenditure_amount <= total_commitment_amount)',
         #     'Expenditure <= Commitment'
         # ),
+        (
+            'parent_id_no_equal_child_id',
+            'CHECK (id != parent_id)',
+            'Temporary Disabled'
+        ),
         (
             'pcc_less_or_eq_to_commitment',
             'CHECK (1=1)',
@@ -186,6 +278,13 @@ class Cear(models.Model):
         ),
 
     ]
+
+    @api.one
+    @api.constrains('has_distribution', 'distribution_ids', 'parent_id')
+    def _check_distribution_ids_must_be_parent(self):
+        if self.parent_id and (self.has_distribution or self.distribution_ids):
+            raise ValidationError('Distributed CEAR must be a parent CEAR')
+        return
 
     # TRANSITIONS
     # ----------------------------------------------------------

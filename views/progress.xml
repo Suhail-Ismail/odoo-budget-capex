@@ -19,8 +19,8 @@
                         </div>
                         <group>
                             <group>
-                                <field name="progress_date"
-                                       required="1"/>
+                                <field name="received_date"/>
+                                <field name="signed_date"/>
                                 <field name="project_id"
                                        required="1"
                                        options="{'no_create': True}"/>
@@ -54,7 +54,7 @@
                                         <field name="cear_id"
                                                options="{'no_create': True}"
                                                required="1"
-                                               domain="[('project_id','=',context.get('project_id'))]"/>
+                                               domain="[('real_cear_id','=',False),('has_distribution','=',False)]"/>
                                         <field name="cear_description" readonly="1"/>
                                         <field name="amount" sum="1"/>
                                         <field name="rfs_date"/>
@@ -75,7 +75,7 @@
                 <tree>
                     <field name="reference_no"/>
                     <field name="progress_amount"/>
-                    <field name="progress_date"/>
+                    <field name="received_date"/>
                     <field name="remarks"/>
                 </tree>
             </field>

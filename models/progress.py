@@ -10,7 +10,7 @@ class Progress(models.Model):
     _name = 'budget.capex.progress'
     _rec_name = 'reference_no'
     _description = 'Cear Progress'
-    _order = 'progress_date'
+    _order = 'received_date'
     _inherit = ['budget.enduser.mixin']
 
     # CHOICES
@@ -20,7 +20,8 @@ class Progress(models.Model):
     # ----------------------------------------------------------
     # division_id, section_id, sub_section_id exist in enduser.mixin
     reference_no = fields.Char(string='Reference No', default='(Reference is Auto Generated)')
-    progress_date = fields.Date(string="Date")
+    received_date = fields.Date(string="Received Date")
+    signed_date = fields.Date(string="Signed Date")
     remarks = fields.Text(string="Remarks")
 
     # RELATED FIELDS
@@ -66,15 +67,15 @@ class Progress(models.Model):
     # ----------------------------------------------------------
     @api.model
     def _generate_reference_no(self, vals):
-        progress_date = fields.Date.from_string(vals['progress_date'])
-        year = progress_date if not progress_date else progress_date.year
+        received_date = fields.Date.from_string(vals['received_date'])
+        year = received_date if not received_date else received_date.year
         section_id = self.env['budget.enduser.section'].browse(vals['section_id'])
         sr = 1
 
         if year and section_id:
             sql = """
                 SELECT * FROM (
-                  SELECT section_id, reference_no, date_part('year', progress_date) AS year
+                  SELECT section_id, reference_no, date_part('year', received_date) AS year
                   FROM budget_capex_progress
                   ORDER BY id DESC) n
                 WHERE n.year=%(year)d

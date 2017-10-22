@@ -46,6 +46,7 @@ Summary
         'views/progress.xml',
         'views/progress_line.xml',
         'views/accrual.xml',
+        'views/accrual_line.xml',
 
         'views/contract_inherit.xml',
         'views/budget_inherit.xml',

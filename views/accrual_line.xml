@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+    <data>
+        <!--START VIEWS-->
+        <!--TREE VIEW-->
+        <record model="ir.ui.view" id="view_tree_accrual_line">
+            <field name="name">Cear Accrual Line</field>
+            <field name="model">budget.capex.accrual.line</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="accrual_id"/>
+                    <field name="cear_id"/>
+                    <field name="milestone"/>
+                    <field name="physical_progress"/>
+                    <field name="remarks"/>
+                </tree>
+            </field>
+        </record>
+        <!--END VIEWS-->
+
+        <!--START ACTIONS-->
+        <!--Budget Action-->
+        <record model="ir.actions.act_window" id="action_accrual_line">
+            <field name="name">Cear Accrual Line</field>
+            <field name="res_model">budget.capex.accrual.line</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_tree_accrual"/>
+        </record>
+        <!--END ACTIONS-->
+    </data>
+</odoo>

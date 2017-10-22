@@ -20,14 +20,14 @@ class ProgressTestCase(TransactionCase):
                                                                      'alias': 'section',
                                                                      'division_id': self.division_id.id})
 
-    def create_progress(self, progress_date=False, project_id=False, division_id=False, section_id=False):
+    def create_progress(self, received_date=False, project_id=False, division_id=False, section_id=False):
         section_id = self.section_id.id if not section_id else section_id.id
         division_id = self.division_id.id if not division_id else division_id.id
         project_id = self.project_id.id if not project_id else project_id.id
-        progress_date = '1990-01-01' if not progress_date else progress_date
+        received_date = '1990-01-01' if not received_date else received_date
 
         return self.env['budget.capex.progress'].create({
-            'progress_date': progress_date,
+            'received_date': received_date,
             'project_id': project_id,
             'division_id': division_id,
             'section_id': section_id
@@ -56,11 +56,11 @@ class ProgressTestCase(TransactionCase):
                                                                 'alias': 'section1',
                                                                 'division_id': self.division_id.id})
 
-        pcc = self.create_progress(progress_date='2017-01-01', section_id=section_id)
+        pcc = self.create_progress(received_date='2017-01-01', section_id=section_id)
         self.assertEqual(pcc.reference_no, 'section1-2017-001')
 
-        pcc = self.create_progress(progress_date='2017-01-01', section_id=section_id)
+        pcc = self.create_progress(received_date='2017-01-01', section_id=section_id)
         self.assertEqual(pcc.reference_no, 'section1-2017-002')
 
-        pcc = self.create_progress(progress_date='2018-01-01', section_id=section_id)
+        pcc = self.create_progress(received_date='2018-01-01', section_id=section_id)
         self.assertEqual(pcc.reference_no, 'section1-2018-001')
