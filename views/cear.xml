@@ -12,19 +12,19 @@
                     <header>
                         <button
                                 string="Process"
-                                name="process"
-                                type="workflow"
+                                name="set2under_process"
+                                type="object"
                                 states="draft"/>
                         <button
                                 string="Authorize"
-                                name="authorize"
-                                type="workflow"
+                                name="set2authorize"
+                                type="object"
                                 confirm="You are AUTHORIZING, are you sure?"
                                 states="under process"/>
                         <button
                                 string="Close"
-                                name="close"
-                                type="workflow"
+                                name="set2close"
+                                type="object"
                                 states="authorized"/>
                         <field name="state" widget="statusbar"
                                statusbar_visible="draft,under process,authorized,closed"/>
@@ -75,11 +75,16 @@
                                 <field name="unique_identifier"/>
                                 <field name="real_cear_id"/>
                                 <field name="group_id"/>
+                                <field name="commitment_amount"/>
+                                <field name="expenditure_amount"/>
                                 <field name="write_date"/>
                                 <field name="system_note"/>
                             </group>
                             <h1>
-                                <field name="no" default_focus="1" placeholder="Cear No"/>
+                                <field name="no"/>
+                                <field name="input_no" default_focus="1"
+                                       placeholder="Cear No" class="oe_edit_only"
+                                       attrs="{'invisible': [('real_cear_id','!=',False)]}"/>
                             </h1>
                             <h3>
                                 <field name="type" class="text-primary"/>
@@ -139,16 +144,14 @@
                                 </group>
                                 <group attrs="{'invisible': [('has_distribution','!=',False)]}">
                                     <group>
-                                        <field name="commitment_amount" string="Commitment"/>
+                                        <field name="input_commitment_amount" string="Commitment"/>
                                     </group>
                                     <group>
-                                        <field name="expenditure_amount" string="Expenditure"/>
+                                        <field name="input_expenditure_amount" string="Expenditure"/>
                                     </group>
                                 </group>
                                 <field name="distribution_ids"
-                                       attrs="{'invisible': [('has_distribution','=',False)]}"
-                                       context="{'default_state': 'authorized', 'default_no': no,
-                                                 'default_real_cear_id': id, 'default_write_date': write_date}">
+                                       attrs="{'invisible': [('has_distribution','=',False)]}">
                                     <tree editable="bottom">
                                         <field name="real_cear_id"
                                                options="{'no_create': True}"
@@ -159,9 +162,10 @@
                                                groups="base.group_no_one"/>
                                         <!--<field name="unique_identifier"-->
                                         <!--invisible="not context.get('default_write_date', False)"/>-->
-                                        <field name="parent_id" options="{'no_create': True}"/>
-                                        <field name="commitment_amount" sum="1"/>
-                                        <field name="expenditure_amount" sum="1"/>
+                                        <field name="parent_id" required="1"
+                                               options="{'no_create': True, 'no_open': True}"/>
+                                        <field name="input_commitment_amount" string="Commitment" sum="1"/>
+                                        <field name="input_expenditure_amount" string="Expenditure" sum="1"/>
                                     </tree>
                                 </field>
                             </page>
@@ -207,12 +211,10 @@
                       decoration-muted="state == 'closed'">
                     <field name="unique_identifier" groups="base.group_noone"/>
                     <field name="type"/>
-                    <field name="no"/>
+                    <field name="no" string="Cear No"/>
                     <field name="year"/>
-                    <field name="commitment_amount" sum="1"/>
-                    <field name="expenditure_amount" sum="1"/>
-                    <field name="total_commitment_amount"/>
-                    <field name="total_expenditure_amount"/>
+                    <field name="commitment_amount" string="Commitment" sum="1"/>
+                    <field name="expenditure_amount" string="Expenditure" sum="1"/>
                     <field name="authorized_amount" sum="1"/>
                     <field name="fn_utilized_amount" sum="1"/>
                     <field name="state"/>
@@ -266,10 +268,12 @@
             <field name="view_id" ref="view_tree_cear"/>
             <field name="search_view_id" ref="budget_capex.search_cear"/>
             <field name="domain"></field>
-            <field name="context">{'form_view_ref': 'budget_capex.view_form_cear',
+            <field name="context">{
+                'form_view_ref': 'budget_capex.view_form_cear',
                 'search_default_filter_need_action': 1,
                 'search_default_filter_real': 1,
-                'search_default_filter_parent': 1
+                'search_default_filter_parent': 1,
+                'default_state': 'draft'
                 }
             </field>
         </record>

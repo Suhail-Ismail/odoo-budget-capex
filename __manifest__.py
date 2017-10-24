@@ -51,7 +51,7 @@ Summary
         'views/contract_inherit.xml',
         'views/budget_inherit.xml',
 
-        'workflows/budget_capex_cear.xml',
+#        'workflows/budget_capex_cear.xml',
 
         'views/menu.xml',
     ],

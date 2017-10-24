@@ -33,11 +33,11 @@ class Cear(models.Model):
     # division_id, section_id, sub_section_id exist in enduser.mixin
     has_distribution = fields.Boolean(default=False)
 
-    state = fields.Selection(STATES, default='draft')
+    state = fields.Selection(STATES, default='authorized')
     category = fields.Char(string='Category')
     year = fields.Selection(string='Year', selection=YEARS, default=year_now)
 
-    no = fields.Char(string='Cear No')
+    input_no = fields.Char(string='Cear No')
     description = fields.Text(string='Cear Description')
     pec_no = fields.Char(string='Pec No')
     remarks = fields.Text(string='Remarks')
@@ -48,11 +48,10 @@ class Cear(models.Model):
     start_date = fields.Date(string='Cear Start Date')
     pec_no_date = fields.Date(string='Pec No Date')
 
-    expenditure_amount = fields.Monetary(currency_field='currency_id',
-                                         string='Expenditure')
-    commitment_amount = fields.Monetary(currency_field='currency_id',
-                                        string='Commitment')
-
+    input_expenditure_amount = fields.Monetary(string='Expenditure Amount',
+                                               currency_field='currency_id')
+    input_commitment_amount = fields.Monetary(string='Commitment Amount',
+                                              currency_field='currency_id')
     # ACTUAL FROM FINANCE
     fn_utilized_amount = fields.Monetary(currency_field='currency_id',
                                          string='Utilized Amount (FN)')
@@ -73,6 +72,7 @@ class Cear(models.Model):
 
     # THIS IS FOR MAKING BULK CEAR A.K.A. CREATING 1 CEAR WITH MULTIPLE LINE TO DISTRIBUTE THE AMOUNT
     real_cear_id = fields.Many2one('budget.capex.cear',
+                                   ondelete='cascade',
                                    string='Real Cear')
     distribution_ids = fields.One2many('budget.capex.cear',
                                        'real_cear_id',
@@ -105,24 +105,12 @@ class Cear(models.Model):
                                          ('state', 'not in', ['draft'])],
                                  string='Project No')
 
-    # ONCHANGE FIELDS
-    # ----------------------------------------------------------
-    @api.onchange('contract_ids')
-    def _onchange_contract_id(self):
-        self.contractor_ids |= self.mapped('contract_ids.contractor_id')
-
-    @api.onchange('distribution_ids')
-    def _onchange_commitment_amount(self):
-        if self.has_distribution:
-            self.commitment_amount = sum(self.mapped('distribution_ids.commitment_amount'))
-
-    @api.onchange('distribution_ids')
-    def _onchange_expenditure_amount(self):
-        if self.has_distribution:
-            self.expenditure_amount = sum(self.mapped('distribution_ids.expenditure_amount'))
-
     # COMPUTE FIELDS
     # ----------------------------------------------------------
+    no = fields.Char(string='Computed Cear No',
+                     compute='_compute_no',
+                     store=True)
+
     # THIS IS FOR MAKING BULK CEAR A.K.A. CREATING 1 CEAR WITH MULTIPLE LINE TO DISTRIBUTE THE AMOUNT
     unique_identifier = fields.Char(string='Unique Identifier',
                                     compute='_compute_unique_identifier',
@@ -131,11 +119,17 @@ class Cear(models.Model):
                             selection=TYPES,
                             compute='_compute_type',
                             store=True)
-
     group_id = fields.Many2one('budget.capex.cear', string='Group',
                                compute='_compute_group_id',
                                store=True)
-
+    expenditure_amount = fields.Monetary(string='Computed Expenditure',
+                                         currency_field='currency_id',
+                                         compute='_compute_expenditure_amount',
+                                         store=True)
+    commitment_amount = fields.Monetary(string='Computed Commitment',
+                                        currency_field='currency_id',
+                                        compute='_compute_commitment_amount',
+                                        store=True)
     total_commitment_amount = fields.Monetary(string='Total Commitment',
                                               currency_field='currency_id',
                                               compute='_compute_total_commitment_amount',
@@ -163,16 +157,13 @@ class Cear(models.Model):
                                    store=True)
 
     @api.one
-    @api.depends('real_cear_id', 'parent_id')
-    def _compute_type(self):
-        if self.has_distribution:
-            self.type = 'distributed'
-        elif not self.real_cear_id and self.parent_id:
-            self.type = 'related'
-        elif self.real_cear_id and self.parent_id:
-            self.type = 'virtual'
-        else:
-            self.type = 'main'
+    @api.depends('input_no', 'real_cear_id', 'real_cear_id.input_no')
+    def _compute_no(self):
+        if self.real_cear_id and self.real_cear_id.input_no:
+            self.no = self.real_cear_id.input_no
+        elif self.input_no:
+            self.no = self.input_no
+        return
 
     @api.one
     @api.depends('type', 'no', 'real_cear_id.no')
@@ -189,6 +180,18 @@ class Cear(models.Model):
             self.unique_identifier = False
 
     @api.one
+    @api.depends('has_distribution', 'real_cear_id', 'parent_id')
+    def _compute_type(self):
+        if self.has_distribution:
+            self.type = 'distributed'
+        elif not self.real_cear_id and self.parent_id:
+            self.type = 'related'
+        elif self.real_cear_id and self.parent_id:
+            self.type = 'virtual'
+        else:
+            self.type = 'main'
+
+    @api.one
     @api.depends('parent_id')
     def _compute_group_id(self):
         if self.parent_id:
@@ -203,6 +206,22 @@ class Cear(models.Model):
 
         self.group_id = self
         return
+
+    @api.one
+    @api.depends('input_commitment_amount', 'type', 'distribution_ids', 'distribution_ids.commitment_amount')
+    def _compute_commitment_amount(self):
+        if self.type == 'distributed':
+            self.commitment_amount = sum(self.distribution_ids.mapped('input_commitment_amount'))
+        else:
+            self.commitment_amount = self.input_commitment_amount
+
+    @api.one
+    @api.depends('input_expenditure_amount', 'type', 'distribution_ids', 'distribution_ids.expenditure_amount')
+    def _compute_expenditure_amount(self):
+        if self.type == 'distributed':
+            self.expenditure_amount = sum(self.distribution_ids.mapped('input_expenditure_amount'))
+        else:
+            self.expenditure_amount = self.input_expenditure_amount
 
     @api.one
     @api.depends('commitment_amount', 'child_ids',
@@ -252,6 +271,15 @@ class Cear(models.Model):
             percent = 0
         self.percent_accrual = percent * 100
 
+    # INVERSE FIELDS
+    # ----------------------------------------------------------
+
+    # ONCHANGE FIELDS
+    # ----------------------------------------------------------
+    @api.onchange('contract_ids')
+    def _onchange_contract_id(self):
+        self.contractor_ids |= self.mapped('contract_ids.contractor_id')
+
     # CONSTRAINS
     # ----------------------------------------------------------
     _sql_constraints = [
@@ -280,12 +308,20 @@ class Cear(models.Model):
 
     ]
 
-    @api.one
-    @api.constrains('has_distribution', 'distribution_ids', 'parent_id')
-    def _check_distribution_ids_must_be_parent(self):
-        if self.parent_id and (self.has_distribution or self.distribution_ids):
-            raise ValidationError('Distributed CEAR must be a parent CEAR')
-        return
+    # TODO CHECK THIS VALIDATION
+    # @api.one
+    # @api.constrains('has_distribution', 'distribution_ids', 'parent_id')
+    # def _check_distribution_ids_must_be_parent(self):
+    #     if not self.parent_id and (self.has_distribution or self.distribution_ids):
+    #         return
+    #     raise ValidationError('Distributed CEAR must be a parent CEAR')
+
+    # @api.one
+    # @api.constrains('has_distribution', 'distribution_ids')
+    # def _check_has_distribution_must_have_distribution(self):
+    #     if self.has_distribution and len(self.distribution_ids) == 0:
+    #         raise ValidationError('Distributed CEAR must have distribution CEAR in financial tab')
+    #     return
 
     # TRANSITIONS
     # ----------------------------------------------------------
@@ -384,3 +420,6 @@ class Cear(models.Model):
             mapped_string += '.child_ids'
 
         return ids
+
+    # POLYMORPH FUNCTIONS
+    # ----------------------------------------------------------
