@@ -8,40 +8,11 @@
         name="CAPEX"
         sequence="5"
         groups="base.group_system,budget_capex.group_capex_user,budget_capex.group_capex_manager"/>
-    <!--END MENU PARENT-->
-
-    <!--MENU LEFT-->
         <menuitem
             id="menu_cear_left"
             name="CEAR"
             sequence="1"
             parent="menu_capex_top"/>
-            <menuitem
-                id="menu_cear_left_left"
-                name="Cear"
-                sequence="1"
-                parent="menu_cear_left"
-                action="action_cear"/>
-            <menuitem
-                id="menu_progress_left_left"
-                name="PCC"
-                sequence="2"
-                parent="menu_cear_left"
-                action="action_progress"/>
-            <menuitem
-                id="menu_accrual_left_left"
-                name="Accrual"
-                sequence="3"
-                parent="menu_cear_left"
-                action="action_accrual"/>
-
-        <menuitem
-            id="menu_contract_left"
-            name="Contract"
-            sequence="2"
-            parent="menu_capex_top"
-            action="action_contract"/>
-
         <menuitem
             id="menu_project_left"
             name="CAPEX Budget"
@@ -49,19 +20,46 @@
             parent="menu_capex_top"
             />
 
-        <menuitem
-            id="menu_cwp_left"
-            name="CWP"
-            sequence="1"
-            parent="menu_project_left"
-            action="budget_core.action_budget_inherit_project"/>
+    <!--END MENU PARENT-->
 
-        <menuitem
-            id="menu_budget_plan_left"
-            name="Budget Plan"
-            sequence="2"
-            parent="menu_project_left"
-            action="budget_core.action_budget_plan_inherit_project"/>
+    <!--MENU LEFT-->
+    <menuitem
+        id="menu_cear_left_left"
+        name="Cear"
+        sequence="1"
+        parent="menu_cear_left"
+        action="action_cear"/>
+    <menuitem
+        id="menu_progress_left_left"
+        name="PCC"
+        sequence="2"
+        parent="menu_cear_left"
+        action="action_progress"/>
+    <menuitem
+                id="menu_accrual_left_left"
+                name="Accrual"
+                sequence="3"
+                parent="menu_cear_left"
+                action="action_accrual"/>
+
+    <menuitem
+        id="menu_cwp_left"
+        name="CWP"
+        sequence="1"
+        parent="menu_project_left"
+        action="budget_core.action_budget_inherit_project"/>
+    <menuitem
+        id="menu_budget_history_inherit_project_left"
+        name="CWP Transfer"
+        sequence="2"
+        parent="menu_project_left"
+        action="budget_core.action_budget_history_inherit_project"/>
+    <menuitem
+        id="menu_budget_plan_left"
+        name="Budget Plan"
+        sequence="2"
+        parent="menu_project_left"
+        action="budget_core.action_budget_plan_inherit_project"/>
     <!--END MENU LEFT-->
 
     </data>

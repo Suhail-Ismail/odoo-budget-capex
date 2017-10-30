@@ -12,15 +12,6 @@ class Cear(models.Model):
     _description = 'Cear'
     _inherit = ['mail.thread', 'budget.enduser.mixin']
 
-    # TODO DEPRECATE
-    # ----------------------------------------------------------
-    is_recharge = fields.Boolean('Is Recharge')
-    is_unforseen = fields.Boolean('Is Unforseen')
-    is_non_engineering = fields.Boolean('Is Non Engineering')
-    is_commitment = fields.Boolean('Is Commitment')
-    is_expenditure = fields.Boolean('Is Expenditure')
-    # ----------------------------------------------------------
-
     # CHOICES
     # ----------------------------------------------------------
     year_now = fields.Datetime.from_string(fields.Date.today()).year
@@ -48,9 +39,9 @@ class Cear(models.Model):
     start_date = fields.Date(string='Cear Start Date')
     pec_no_date = fields.Date(string='Pec No Date')
 
-    input_expenditure_amount = fields.Monetary(string='Expenditure Amount',
+    input_expenditure_amount = fields.Monetary(string='Input Expenditure Amount',
                                                currency_field='currency_id')
-    input_commitment_amount = fields.Monetary(string='Commitment Amount',
+    input_commitment_amount = fields.Monetary(string='Input Commitment Amount',
                                               currency_field='currency_id')
     # ACTUAL FROM FINANCE
     fn_utilized_amount = fields.Monetary(currency_field='currency_id',
@@ -293,7 +284,7 @@ class Cear(models.Model):
         (
             'parent_id_no_equal_child_id',
             'CHECK (id != parent_id)',
-            'Temporary Disabled'
+            'Cear can not be related to self'
         ),
         (
             'pcc_less_or_eq_to_commitment',
